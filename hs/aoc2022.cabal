@@ -1,0 +1,42 @@
+cabal-version:      2.4
+name:               aoc2022
+version:            0.1.0.0
+license:            BSD-3-Clause
+license-file:       LICENSE
+copyright:          (c) 2022 Daniel Lin
+author:             Daniel Lin
+maintainer:         ephemient@gmail.com
+homepage:           https://github.com/ephemient/aoc2022/tree/main/hs
+synopsis:           Advent of Code 2022 - my solutions in Haskell
+description:        Please see the README on GitHub at <https://github.com/ephemient/aoc2022/blob/main/hs/README.md>
+
+data-files:
+    day1.txt
+
+extra-source-files:
+    README.md
+
+library
+    exposed-modules:
+        Day1
+    build-depends:
+        base ^>=4.16.0.0
+      , split ^>=0.2.3.5
+      , text ^>=2.0.0
+    other-modules:
+        Common
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+executable aoc2022-exe
+    main-is:          Main.hs
+    build-depends:
+        aoc2022
+      , base ^>=4.16.0.0
+      , text ^>=2.0.0
+    other-modules:
+        Paths_aoc2022
+    hs-source-dirs:   app
+    default-language: GHC2021
+    ghc-options:      -no-hs-main -threaded
+    c-sources:        app/cbits/main.c
