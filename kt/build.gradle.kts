@@ -4,8 +4,10 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.allopen")
     alias(libs.plugins.dependency.updates)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlinx.benchmark)
 }
 
 dependencies {
@@ -25,6 +27,7 @@ kotlin {
         getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlinx.benchmark)
             }
         }
 
@@ -37,6 +40,25 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
             }
+        }
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+}
+
+benchmark {
+    targets {
+        register("jvmTest")
+    }
+
+    configurations {
+        named("main") {
+            warmups = 1
+            iterationTime = 1
+            project.findProperty("benchmarkInclude")?.let { include(it.toString()) }
+            project.findProperty("benchmarkExclude")?.let { exclude(it.toString()) }
         }
     }
 }

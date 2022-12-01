@@ -9,6 +9,12 @@ Run the test suite:
 ./gradlew allTests
 ```
 
+Run [kotlinx.benchmark](https://github.com/Kotlin/kotlinx-benchmark) ([JMH](https://openjdk.java.net/projects/code-tools/jmh/)) benchmarks:
+
+```sh
+./gradlew benchmark
+```
+
 Print solutions for the inputs provided in local data files:
 
 ```sh
