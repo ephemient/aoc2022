@@ -16,8 +16,6 @@ Run the [Hspec](https://hspec.github.io/) test suite:
 cabal test aoc2022-test
 ```
 
-```
-
 Print solutions for the inputs provided in local data files:
 
 ```sh
