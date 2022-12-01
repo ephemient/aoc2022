@@ -1,0 +1,4 @@
+theme: jekyll-theme-minimal
+plugins:
+  - jekyll-mentions
+  - jemoji
