@@ -40,3 +40,19 @@ executable aoc2022-exe
     default-language: GHC2021
     ghc-options:      -no-hs-main -threaded
     c-sources:        app/cbits/main.c
+
+test-suite aoc2022-test
+    type:             exitcode-stdio-1.0
+    main-is:          Main.hs
+    build-depends:
+        aoc2022
+      , base ^>=4.16.0.0
+      , hspec ^>=2.10.0
+      , text ^>=2.0.0
+    other-modules:
+        Day1Spec
+    hs-source-dirs:   test
+    default-language: GHC2021
+    build-tool-depends:
+        hspec-discover:hspec-discover ^>=2.10.0
+    ghc-options:      -threaded -rtsopts "-with-rtsopts=-N -qg"

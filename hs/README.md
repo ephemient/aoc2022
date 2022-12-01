@@ -7,7 +7,15 @@ Setup:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-cabal configure
+cabal configure --enable-tests
+```
+
+Run the [Hspec](https://hspec.github.io/) test suite:
+
+```sh
+cabal test aoc2022-test
+```
+
 ```
 
 Print solutions for the inputs provided in local data files:
