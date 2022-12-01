@@ -24,6 +24,7 @@ black = "^22.10.0"
 isort = "^5.10.1"
 pylint = "^2.15.7"
 pytest = "^7.2.0"
+pytest-benchmark = { version = "^4.0.0", extras = ["histogram"] }
 
 [tool.poetry.scripts]
 aoc2022 = "aoc2022.main:main"
@@ -41,7 +42,8 @@ profile = "black"
 max-line-length = "88"
 
 [tool.pytest.ini_options]
-addopts = '--doctest-modules'
+addopts = '--doctest-modules --benchmark-disable --benchmark-sort=fullname'
+required_plugins = ['pytest-benchmark']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

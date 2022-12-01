@@ -16,6 +16,12 @@ Run the test suite:
 poetry run pytest
 ```
 
+Run the benchmarks:
+
+```sh
+poetry run pytest --benchmark-enable
+```
+
 Print solutions for the inputs provided in local data files:
 
 ```sh
