@@ -1,0 +1,34 @@
+name: Haskell CI
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ hs/** ]
+  pull_request:
+    branches: [ main ]
+    paths: [ hs/** ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: haskell/actions/setup@v2
+        id: setup-haskell
+        with:
+          ghc-version: 9.2.5
+      - run: cabal configure
+        working-directory: hs
+      - run: cabal freeze
+        working-directory: hs
+      - uses: actions/cache@v2
+        with:
+          key: hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-build
+          path: ${{ steps.setup-haskell.outputs.cabal-store }}
+      - run: cabal build all --only-dependencies
+        working-directory: hs
+      - run: cabal build all
+        working-directory: hs
