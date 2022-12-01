@@ -1,6 +1,7 @@
 import io
 
 import pkg_resources
+
 from aoc2022 import day1
 
 
