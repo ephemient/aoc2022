@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun getInput(day: Int): List<String> =
+actual fun getInput(day: Int): List<String> =
     checkNotNull(ClassLoader.getSystemClassLoader().getResourceAsStream("day$day.txt")) { "No data for day $day" }
         .bufferedReader()
         .use { it.readLines() }
