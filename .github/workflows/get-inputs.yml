@@ -19,12 +19,14 @@ jobs:
         id: get-day
         run: |
           from datetime import datetime, timedelta, timezone
+          import os
           tz = timezone(timedelta(hours=-5))
           year = ${{ inputs.year }} or 2022
           day = max(0, min(25, (datetime.now(tz) - datetime(year, 12, 1, 0, 0, 0, 0, tz)).days + 1))
-          print("::set-output name=year::" + str(year))
-          print("::set-output name=day::" + str(min(25, max(0, day))))
-          print("::set-output name=days::" + ' '.join(map(str, range(1, day + 1))))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            print("year=" + str(year), file=f)
+            print("day=" + str(min(25, max(0, day))), file=f)
+            print("days=" + ' '.join(map(str, range(1, day + 1))), file=f)
         shell: python
       - id: cache
         uses: actions/cache@v3
