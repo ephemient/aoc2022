@@ -28,5 +28,5 @@ jobs:
         working-directory: py
       - run: poetry run isort . --check
         working-directory: py
-      - run: poetry run pytest
+      - run: poetry run pytest --benchmark-skip
         working-directory: py
