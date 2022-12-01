@@ -34,6 +34,5 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           cwd: gh-docs
-          branch: gh-docs
           add: benchmark.svg
           message: 'pytest-benchmark ${{ github.sha }}'

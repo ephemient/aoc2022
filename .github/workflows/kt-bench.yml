@@ -72,6 +72,5 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           cwd: gh-docs
-          branch: gh-docs
           add: jmh-visualizer
           message: 'kotlinx.benchmark ${{ github.sha }}'
