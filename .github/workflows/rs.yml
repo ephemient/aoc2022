@@ -1,0 +1,40 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ rs/** ]
+  pull_request:
+    branches: [ main ]
+    paths: [ rs/** ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: touch day{1..25}.txt
+      - id: rust-toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy, rustfmt
+          default: true
+      - uses: actions/cache@v2
+        with:
+          key: ${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-${{ hashFiles('**/Cargo.*') }}
+          restore-keys: |
+              ${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-
+          path: ~/.cargo
+      - run: cargo fmt -- --check
+        working-directory: rs
+      - run: cargo clippy -- --deny warnings
+        working-directory: rs
+      - run: cargo test
+        working-directory: rs
+      - run: cargo build --all-features --all-targets --release
+        working-directory: rs

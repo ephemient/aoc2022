@@ -1,0 +1,27 @@
+[package]
+name = "aoc2022"
+description = "Advent of Code 2022 - my answers"
+version = "0.1.0"
+authors = ["Daniel Lin <ephemient@gmail.com>"]
+license = "BSD-3-Clause"
+edition = "2021"
+readme = "README.md"
+homepage = "https://github.com/ephemient/aoc2022/tree/main/rs"
+build = "build.rs"
+
+[lib]
+name = "aoc2022"
+path = "src/lib.rs"
+
+[[bin]]
+name = "aoc2022"
+path = "src/main.rs"
+
+[build-dependencies]
+build_const = "0.2.2"
+
+[dependencies]
+build_const = "0.2.2"
+
+[dev-dependencies]
+pretty_assertions = "1"
