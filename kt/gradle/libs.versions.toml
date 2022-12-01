@@ -1,0 +1,14 @@
+[versions]
+dependency-updates = "0.44.0"
+detekt = "1.22.0"
+junit-jupiter = "5.9.1"
+kotlin = "1.7.21"
+
+[plugins]
+dependency-updates = { id = "com.github.ben-manes.versions", version.ref = "dependency-updates" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
+[libraries]
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }

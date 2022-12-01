@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: haskell/actions/setup@v2
         id: setup-haskell
         with:
@@ -27,6 +27,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           key: hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-build
+          restore-keys: |
+            hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-
+            hs-${{ runner.os }}-
           path: ${{ steps.setup-haskell.outputs.cabal-store }}
       - run: cabal build all --only-dependencies
         working-directory: hs
