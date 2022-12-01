@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "aoc2022"
+version = "0.1.0"
+description = ""
+license = "BSD-3-Clause"
+authors = ["Daniel Lin <ephemient@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/ephemient/aoc2022/tree/main/py"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent"
+]
+include = ["aoc2022/day*.txt"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.dev-dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+pylint = "^2.15.7"
+pytest = "^7.2.0"
+
+[tool.poetry.scripts]
+aoc2022 = "aoc2022.main:main"
+
+[tool.poetry.plugins."aoc2022.days"]
+1 = "aoc2022.day1:parts"
+
+[tool.black]
+target_version = ["py311"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pylint.format]
+max-line-length = "88"
+
+[tool.pytest.ini_options]
+addopts = '--doctest-modules'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

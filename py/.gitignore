@@ -1,0 +1,4 @@
+__pycache__/
+dist/
+aoc2022/day*.txt
+*~
