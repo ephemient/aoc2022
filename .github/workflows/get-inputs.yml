@@ -27,7 +27,7 @@ jobs:
           print("::set-output name=days::" + ' '.join(map(str, range(1, day + 1))))
         shell: python
       - id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: inputs-${{ steps.get-day.outputs.day }}
           restore-keys: inputs-
@@ -41,7 +41,7 @@ jobs:
         shell: bash --noprofile --norc -euxo pipefail {0}
         env:
           SESSION: ${{ secrets.SESSION }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: inputs
           path: day*.txt

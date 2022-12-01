@@ -24,7 +24,7 @@ jobs:
         working-directory: hs
       - run: cabal freeze
         working-directory: hs
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           key: hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-build
           restore-keys: |
