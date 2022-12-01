@@ -50,7 +50,7 @@ def main():
         days = sorted(set(days))
     else:
         days = (datetime.now(TZ()) - base).days + 1
-        days = range(1, max(0, min(25, days)))
+        days = range(1, max(0, min(25, days)) + 1)
 
     for day in days:
         file = f"day{day}.txt"
@@ -87,7 +87,13 @@ def main():
         print(f"{file} = {url}")
         if dry_run:
             continue
-        request = Request(url, headers={"Cookie": f"session={session}"})
+        request = Request(
+            url,
+            headers={
+                "User-Agent":
+                "https://github.com/ephemient/aoc2022/blob/main/get-inputs",
+                "Cookie": f"session={session}"
+            })
         response = urlopen(request)
         if response.status != 200:
             raise HTTPError(response.url, response.code, response.msg,

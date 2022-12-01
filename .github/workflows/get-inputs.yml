@@ -40,7 +40,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           for day in ${{ steps.get-day.outputs.days }}; do
-            [[ -e day$day.txt ]] || curl -b session=$SESSION -o day$day.txt -f https://adventofcode.com/${{ steps.get-day.outputs.year }}/day/$day/input
+        [[ -e day$day.txt ]] || curl -A https://github.com/ephemient/aoc2022/blob/main/.github/workflows/get-inputs.yml -b session=$SESSION -o day$day.txt -f https://adventofcode.com/${{ steps.get-day.outputs.year }}/day/$day/input
           done
         shell: bash --noprofile --norc -euxo pipefail {0}
         env:
