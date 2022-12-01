@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: touch day{1..25}.txt
       - id: rust-toolchain
         uses: actions-rs/toolchain@v1
@@ -24,7 +24,7 @@ jobs:
           profile: minimal
           components: clippy, rustfmt
           default: true
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           key: ${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-${{ hashFiles('**/Cargo.*') }}
           restore-keys: |

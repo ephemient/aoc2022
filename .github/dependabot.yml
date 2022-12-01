@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /kt
+    schedule:
+      interval: daily
+  - package-ecosystem: pip
+    directory: /py
+    schedule:
+      interval: daily
+  - package-ecosystem: cargo
+    directory: /rs
+    schedule:
+      interval: daily
+  - package-ecosystem: bundler
+    directory: /
+    target-branch: gh-docs
+    schedule:
+      interval: daily
