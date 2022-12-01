@@ -1,0 +1,51 @@
+name: Get inputs
+
+on:
+  workflow_call:
+    inputs:
+      year:
+        required: false
+        type: number
+    secrets:
+      SESSION:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Day
+        id: get-day
+        run: |
+          from datetime import datetime, timedelta, tzinfo
+          class TZ(tzinfo):
+              def utcoffset(self, dt):
+                  return timedelta(hours=-5) + self.dst(dt)
+              def dst(self, dt):
+                  return timedelta(0)
+          year = ${{ inputs.year }} or 2022
+          day = max(0, min(25, (datetime.now(TZ()) - datetime(year, 12, 1, 0, 0, 0, 0, TZ())).days + 1))
+          print("::set-output name=year::" + str(year))
+          print("::set-output name=day::" + str(min(25, max(0, day))))
+          print("::set-output name=days::" + ' '.join(map(str, range(1, day + 1))))
+        shell: python
+      - id: cache
+        uses: actions/cache@v2
+        with:
+          key: inputs-${{ steps.get-day.outputs.day }}
+          restore-keys: inputs-
+          path: day*.txt
+      - name: Download inputs
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          for day in ${{ steps.get-day.outputs.days }}; do
+            [[ -e day$day.txt ]] || curl -b session=$SESSION -o day$day.txt -f https://adventofcode.com/${{ steps.get-day.outputs.year }}/day/$day/input
+          done
+        shell: bash --noprofile --norc -euxo pipefail {0}
+        env:
+          SESSION: ${{ secrets.SESSION }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: inputs
+          path: day*.txt
