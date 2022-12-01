@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import shutil
 import sys
@@ -8,14 +8,7 @@ import time
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
 
-
-class TZ(tzinfo):
-
-    def utcoffset(self, dt):
-        return timedelta(hours=-5) + self.dst(dt)
-
-    def dst(self, dt):
-        return timedelta(0)
+tz = timezone(timedelta(hours=-5))
 
 
 def main():
@@ -45,11 +38,11 @@ def main():
             session = session_file.read().strip()
 
     year, days = args.year, args.days
-    base = datetime(year, 12, 1, 0, 0, 0, 0, TZ())
+    base = datetime(year, 12, 1, 0, 0, 0, 0, tz)
     if days:
         days = sorted(set(days))
     else:
-        days = (datetime.now(TZ()) - base).days + 1
+        days = (datetime.now(tz) - base).days + 1
         days = range(1, max(0, min(25, days)) + 1)
 
     for day in days:
@@ -60,7 +53,7 @@ def main():
         if not dry_run:
             target = base + timedelta(days=day - 1)
             while True:
-                now = datetime.now(TZ())
+                now = datetime.now(tz)
                 if now >= target:
                     break
                 delta = target - now

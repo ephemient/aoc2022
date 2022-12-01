@@ -18,14 +18,10 @@ jobs:
       - name: Get Day
         id: get-day
         run: |
-          from datetime import datetime, timedelta, tzinfo
-          class TZ(tzinfo):
-              def utcoffset(self, dt):
-                  return timedelta(hours=-5) + self.dst(dt)
-              def dst(self, dt):
-                  return timedelta(0)
+          from datetime import datetime, timedelta, timezone
+          tz = timezone(timedelta(hours=-5))
           year = ${{ inputs.year }} or 2022
-          day = max(0, min(25, (datetime.now(TZ()) - datetime(year, 12, 1, 0, 0, 0, 0, TZ())).days + 1))
+          day = max(0, min(25, (datetime.now(tz) - datetime(year, 12, 1, 0, 0, 0, 0, tz)).days + 1))
           print("::set-output name=year::" + str(year))
           print("::set-output name=day::" + str(min(25, max(0, day))))
           print("::set-output name=days::" + ' '.join(map(str, range(1, day + 1))))
