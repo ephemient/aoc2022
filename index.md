@@ -3,7 +3,7 @@
 
 ## Haskell
 
-[Criterion](aoc2021-bench.html)
+[Criterion](aoc2022-bench.html)
 
 ## Kotlin
 
