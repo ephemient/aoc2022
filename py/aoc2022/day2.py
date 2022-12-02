@@ -2,6 +2,7 @@
 Day 2: Rock Paper Scissors
 """
 
+
 def _parse(lines):
     return (
         (ord(line[0]) - ord("A") + 1, ord(line[2]) - ord("X") + 1) for line in lines
