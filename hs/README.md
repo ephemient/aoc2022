@@ -16,6 +16,12 @@ Run the [Hspec](https://hspec.github.io/) test suite:
 cabal test aoc2022-test
 ```
 
+Run [criterion](http://www.serpentine.com/criterion/) benchmarks ([results online](https://ephemient.github.io/aoc2022/aoc2022-bench.html)):
+
+```sh
+cabal bench aoc2022-bench
+```
+
 Print solutions for the inputs provided in local data files:
 
 ```sh

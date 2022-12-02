@@ -1,0 +1,46 @@
+name: Haskell benchmarks
+
+on:
+  workflow_dispatch:
+
+jobs:
+  get-inputs:
+    uses: ephemient/aoc2022/.github/workflows/get-inputs.yml@main
+    secrets:
+      SESSION: ${{ secrets.SESSION }}
+
+  build:
+    needs: [ get-inputs ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          ref: gh-docs
+          path: gh-docs
+      - uses: actions/download-artifact@v3
+        with:
+          name: inputs
+          path: hs
+      - uses: haskell/actions/setup@v2
+        with:
+          ghc-version: 9.2.5
+      - run: cabal configure --enable-tests --enable-benchmarks
+        working-directory: hs
+      - run: cabal freeze
+        working-directory: hs
+      - uses: actions/cache@v3
+        with:
+          key: hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-bench
+          restore-keys: |
+            hs-${{ runner.os }}-${{ hashFiles('**/cabal.project.freeze') }}-
+            hs-${{ runner.os }}-
+          path: ${{ steps.setup-haskell.outputs.cabal-store }}
+      - run: cabal bench bench:aoc2022-bench --benchmark-options='-o ${{ github.workspace }}/gh-docs/aoc2022-bench.html'
+        working-directory: hs
+      - uses: EndBug/add-and-commit@v9
+        with:
+          cwd: gh-docs
+          add: aoc2022-bench.html
+          message: 'Haskell Criterion ${{ github.sha }}'

@@ -53,8 +53,24 @@ test-suite aoc2022-test
       , text ^>=2.0.0
     other-modules:
         Day1Spec
+      , Day2Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:
         hspec-discover:hspec-discover ^>=2.10.0
     ghc-options:      -threaded -rtsopts "-with-rtsopts=-N -qg"
+
+benchmark aoc2022-bench
+    type:             exitcode-stdio-1.0
+    main-is:          Main.hs
+    build-depends:
+        aoc2022
+      , base ^>=4.16.4.0
+      , criterion ^>=1.6.0.0
+      , text ^>=2.0.0
+    other-modules:
+        Paths_aoc2022
+    hs-source-dirs:   bench
+    default-language: GHC2021
+    ghc-options:      -no-hs-main -threaded
+    c-sources:        bench/cbits/main.c

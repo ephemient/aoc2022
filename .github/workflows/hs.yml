@@ -20,7 +20,7 @@ jobs:
         id: setup-haskell
         with:
           ghc-version: 9.2.5
-      - run: cabal configure --enable-tests
+      - run: cabal configure --enable-tests --enable-benchmarks
         working-directory: hs
       - run: cabal freeze
         working-directory: hs
