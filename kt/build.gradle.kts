@@ -28,20 +28,18 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
         getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
         val commonBench by creating {
-            dependsOn(commonMain)
             dependencies {
                 implementation(libs.kotlinx.benchmark)
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             resources.srcDir(jvmResources)
         }
         getByName("jvmTest") {
@@ -53,7 +51,6 @@ kotlin {
         }
         getByName("jvmBench") {
             dependsOn(commonBench)
-            dependsOn(jvmMain)
         }
     }
 }
