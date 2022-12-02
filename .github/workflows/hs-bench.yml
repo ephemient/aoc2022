@@ -24,6 +24,7 @@ jobs:
           name: inputs
           path: hs
       - uses: haskell/actions/setup@v2
+        id: setup-haskell
         with:
           ghc-version: 9.2.5
       - run: cabal configure --enable-tests --enable-benchmarks
