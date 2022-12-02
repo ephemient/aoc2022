@@ -35,5 +35,5 @@ jobs:
         working-directory: hs
       - run: cabal build all
         working-directory: hs
-      - run: cabal test all
+      - run: cabal test all --test-show-details=direct
         working-directory: hs
