@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.plugins.ApplicationPlugin.APPLICATION_GROUP
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
     kotlin("multiplatform")
@@ -21,17 +22,27 @@ val jvmResources by tasks.registering(Sync::class) {
 }
 
 kotlin {
-    jvm()
+    jvm {
+        compilations.create("bench") {
+            associateWith(compilations.getByName("main"))
+        }
+    }
 
     sourceSets {
+        val commonMain by getting
         getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
+            }
+        }
+        val commonBench by creating {
+            dependsOn(commonMain)
+            dependencies {
                 implementation(libs.kotlinx.benchmark)
             }
         }
 
-        getByName("jvmMain") {
+        val jvmMain by getting {
             resources.srcDir(jvmResources)
         }
         getByName("jvmTest") {
@@ -40,6 +51,10 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
             }
+        }
+        getByName("jvmBench") {
+            dependsOn(commonBench)
+            dependsOn(jvmMain)
         }
     }
 }
@@ -50,7 +65,7 @@ allOpen {
 
 benchmark {
     targets {
-        register("jvmTest")
+        register("jvmBench")
     }
 
     configurations {
