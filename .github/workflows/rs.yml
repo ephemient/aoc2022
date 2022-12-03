@@ -26,9 +26,10 @@ jobs:
           default: true
       - uses: actions/cache@v3
         with:
-          key: ${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-${{ hashFiles('**/Cargo.*') }}
+          key: rs-${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-${{ hashFiles('**/Cargo.*') }}-build
           restore-keys: |
-              ${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-
+              rs-${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-${{ hashFiles('**/Cargo.*') }}-
+              rs-${{ runner.os }}-${{ steps.rust-toolchain.outputs.rustc_hash }}-
           path: ~/.cargo
       - run: cargo fmt -- --check
         working-directory: rs

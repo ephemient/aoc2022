@@ -9,6 +9,13 @@ Run the test suite:
 cargo test
 ```
 
+Run the [Criterion.rs](https://github.com/bheisler/criterion.rs) benchmarks:
+
+```sh
+cargo install cargo-criterion
+cargo criterion
+```
+
 Print solutions for the inputs provided in local data files:
 
 ```sh
