@@ -25,7 +25,6 @@ library
       , Day3
     build-depends:
         base ^>=4.16.0.0
-      , containers ^>=0.6.5.1
       , split ^>=0.2.3.5
       , text ^>=2.0.0
     other-modules:
