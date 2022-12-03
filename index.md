@@ -12,3 +12,7 @@
 ## Python
 
 [pytest-benchmark](benchmark.svg)
+
+## Rust
+
+[Criterion](criterion/index.html)
