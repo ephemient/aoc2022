@@ -4,7 +4,7 @@ Description:    <https://adventofcode.com/2022/day/3 Day 3: Rucksack Reorganizat
 -}
 module Day3 (day3a, day3b) where
 
-import Data.Bits (Bits((.&.), setBit, testBit, zeroBits), FiniteBits(finiteBitSize))
+import Data.Bits (Bits((.&.), setBit, testBit, zeroBits), FiniteBits(countTrailingZeros, finiteBitSize))
 import Data.Char (ord)
 import Data.List (foldl1')
 import Data.List.Split (chunksOf)
@@ -28,4 +28,4 @@ day3a input = sum $ do
 day3b :: Text -> Int
 day3b input = sum $ do
     group <- chunksOf 3 $ T.lines input
-    bits . foldl1' (.&.) $ items <$> group
+    pure . countTrailingZeros . foldl1' (.&.) $ items <$> group
