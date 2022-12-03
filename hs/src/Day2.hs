@@ -2,7 +2,6 @@
 Module:         Day2
 Description:    <https://adventofcode.com/2022/day/2 Day 2: Rock Paper Scissors>
 -}
-{-# LANGUAGE OverloadedStrings #-}
 module Day2 (day2a, day2b) where
 
 import Data.Char (ord)
