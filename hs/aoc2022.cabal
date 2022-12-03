@@ -13,6 +13,7 @@ description:        Please see the README on GitHub at <https://github.com/ephem
 data-files:
     day1.txt
   , day2.txt
+  , day3.txt
 
 extra-source-files:
     README.md
@@ -21,8 +22,10 @@ library
     exposed-modules:
         Day1
       , Day2
+      , Day3
     build-depends:
         base ^>=4.16.0.0
+      , containers ^>=0.6.5.1
       , split ^>=0.2.3.5
       , text ^>=2.0.0
     other-modules:
@@ -54,6 +57,7 @@ test-suite aoc2022-test
     other-modules:
         Day1Spec
       , Day2Spec
+      , Day3Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:

@@ -3,6 +3,7 @@ module Main (main) where
 
 import Day1 (day1a, day1b)
 import Day2 (day2a, day2b)
+import Day3 (day3a, day3b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -28,3 +29,4 @@ main :: IO ()
 main = do
     run 1 print [day1a, day1b]
     run 2 print [day2a, day2b]
+    run 3 print [day3a, day3b]
