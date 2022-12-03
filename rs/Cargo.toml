@@ -22,6 +22,7 @@ build_const = "0.2.2"
 
 [dependencies]
 build_const = "0.2.2"
+itertools = "0.10.5"
 
 [dev-dependencies]
 pretty_assertions = "1"
