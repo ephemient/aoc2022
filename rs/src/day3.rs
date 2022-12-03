@@ -37,10 +37,9 @@ where
         .chunks(3)
         .into_iter()
         .filter_map(|chunk| {
-            chunk.fold(None, |acc, line| {
-                let items = items(line.as_ref().as_bytes());
-                Some(acc.map_or_else(|| items, |acc| acc & items))
-            })
+            chunk
+                .map(|line| items(line.as_ref().as_bytes()))
+                .reduce(|x, y| x & y)
         })
         .map(u64::trailing_zeros)
         .sum()
