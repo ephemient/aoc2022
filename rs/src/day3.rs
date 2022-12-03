@@ -1,12 +1,14 @@
 use itertools::Itertools;
-use std::collections::HashSet;
 
-fn prio(item: u8) -> u8 {
-    if item & 32 != 0 {
-        item & 31
-    } else {
-        (item & 31) + 26
-    }
+fn items(input: &[u8]) -> u64 {
+    input.iter().fold(0, |acc, byte| {
+        acc | (1
+            << (if byte & 32 != 0 {
+                byte & 31
+            } else {
+                (byte & 31) + 26
+            }))
+    })
 }
 
 pub fn part1<'a, I, S>(lines: I) -> u32
@@ -19,13 +21,8 @@ where
         .map(|line| -> u32 {
             let bytes = line.as_ref().as_bytes();
             let (first, second) = bytes.split_at(bytes.len() / 2);
-            first
-                .iter()
-                .copied()
-                .collect::<HashSet<_>>()
-                .intersection(&second.iter().copied().collect())
-                .map(|&item| prio(item) as u32)
-                .sum()
+            let bits = items(first) & items(second);
+            (0..u64::BITS).filter(|b| bits & (1 << b) != 0).sum()
         })
         .sum()
 }
@@ -40,18 +37,12 @@ where
         .chunks(3)
         .into_iter()
         .filter_map(|chunk| {
-            chunk
-                .fold(None, |acc, line| -> Option<HashSet<u8>> {
-                    let items = line.as_ref().as_bytes().iter().copied().collect();
-                    Some(
-                        acc.map(|acc| acc.intersection(&items).copied().collect())
-                            .unwrap_or_else(|| items),
-                    )
-                })?
-                .into_iter()
-                .next()
+            chunk.fold(None, |acc, line| {
+                let items = items(line.as_ref().as_bytes());
+                Some(acc.map_or_else(|| items, |acc| acc & items))
+            })
         })
-        .map(|item| prio(item) as u32)
+        .map(u64::trailing_zeros)
         .sum()
 }
 
