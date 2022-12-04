@@ -33,6 +33,7 @@ aoc2022 = "aoc2022.main:main"
 1 = "aoc2022.day1:parts"
 2 = "aoc2022.day2:parts"
 3 = "aoc2022.day3:parts"
+4 = "aoc2022.day4:parts"
 
 [tool.black]
 target_version = ["py311"]
