@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate build_const;
 
-use aoc2022::{day1, day2, day3};
+use aoc2022::{day1, day2, day3, day4};
 use std::collections::HashSet;
 use std::env;
 use std::io;
@@ -32,6 +32,13 @@ fn main() -> io::Result<()> {
         println!("Day 3");
         println!("{:?}", day3::part1(DAY3));
         println!("{:?}", day3::part2(DAY3));
+        println!();
+    }
+
+    if args.is_empty() || args.contains(&4) {
+        println!("Day 4");
+        println!("{:?}", day4::part1(DAY4));
+        println!("{:?}", day4::part2(DAY4));
         println!();
     }
 
