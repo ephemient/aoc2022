@@ -27,6 +27,14 @@ fun main(args: Array<String>) {
         println(day3.part2())
         println()
     }
+
+    if (days?.contains(4) != false) {
+        val day4 = Day4(getInput(4))
+        println("Day 4")
+        println(day4.part1())
+        println(day4.part2())
+        println()
+    }
 }
 
 actual fun getInput(day: Int): List<String> =
