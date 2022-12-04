@@ -14,6 +14,7 @@ data-files:
     day1.txt
   , day2.txt
   , day3.txt
+  , day4.txt
 
 extra-source-files:
     README.md
@@ -23,6 +24,7 @@ library
         Day1
       , Day2
       , Day3
+      , Day4
     build-depends:
         base ^>=4.16.0.0
       , split ^>=0.2.3.5
@@ -57,6 +59,7 @@ test-suite aoc2022-test
         Day1Spec
       , Day2Spec
       , Day3Spec
+      , Day4Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:

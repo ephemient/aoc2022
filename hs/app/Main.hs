@@ -4,6 +4,7 @@ module Main (main) where
 import Day1 (day1a, day1b)
 import Day2 (day2a, day2b)
 import Day3 (day3a, day3b)
+import Day4 (day4a, day4b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -30,3 +31,4 @@ main = do
     run 1 print [day1a, day1b]
     run 2 print [day2a, day2b]
     run 3 print [day3a, day3b]
+    run 4 (either fail print) [day4a, day4b]
