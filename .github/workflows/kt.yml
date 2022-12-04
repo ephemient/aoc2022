@@ -21,6 +21,13 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      - uses: actions/cache@v3
+        with:
+          key: kt-${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}-build
+          restore-keys: |
+            kt-${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}-
+            kt-${{ runner.os }}-konan-
+          path: ~/.konan
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: check assembleBenchmarks

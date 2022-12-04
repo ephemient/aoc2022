@@ -50,8 +50,17 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      - uses: actions/cache@v3
+        with:
+          key: kt-${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}-bench
+          restore-keys: |
+            kt-${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}-
+            kt-${{ runner.os }}-konan-
+          path: ~/.konan
       - run: ./gradlew --no-daemon --info benchmark
         working-directory: kt
+        env:
+          aoc2022_data: ${{ github.workspace }}
       - name: Create provided.js
         run: |
           shopt -s failglob

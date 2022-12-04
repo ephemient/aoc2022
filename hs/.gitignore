@@ -1,0 +1,6 @@
+day*.txt
+cabal.project.local
+dist-*
+.ghci
+.ghcid
+*~

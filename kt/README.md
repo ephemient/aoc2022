@@ -12,13 +12,13 @@ Run the test suite:
 Run [kotlinx.benchmark](https://github.com/Kotlin/kotlinx-benchmark) ([JMH](https://openjdk.java.net/projects/code-tools/jmh/)) benchmarks:
 
 ```sh
-./gradlew benchmark
+env aoc2022_data=.. ./gradlew benchmark
 ```
 
 Print solutions for the inputs provided in local data files:
 
 ```sh
-./gradlew jvmRun
+env aoc2022_data=.. ./gradlew runJvm run{Debug,Release}Executable{Linux{X64,Arm64},MingwX86,Macos{X64,Arm64}}
 ```
 
 Run all checks, including [Detekt](https://detekt.github.io/) static code analysis and [ktlint](https://ktlint.github.io/) formatter:

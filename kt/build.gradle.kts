@@ -1,6 +1,8 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.plugins.ApplicationPlugin.APPLICATION_GROUP
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
 
 plugins {
     kotlin("multiplatform")
@@ -22,24 +24,32 @@ val jvmResources by tasks.registering(Sync::class) {
 
 kotlin {
     jvm {
-        compilations.create("bench") {
-            associateWith(compilations.getByName("main"))
+        compilations.create("bench")
+    }
+    presets.withType<KotlinNativeTargetWithHostTestsPreset> {
+        targetFromPreset(this) {
+            binaries.executable {
+                entryPoint("com.github.ephemient.aoc2022.main")
+            }
+            compilations.create("bench")
         }
     }
 
     sourceSets {
-        getByName("commonTest") {
+        val commonMain by getting
+        val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
         val commonBench by creating {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.kotlinx.benchmark)
             }
         }
 
-        getByName("jvmMain") {
+        val jvmMain by getting {
             resources.srcDir(jvmResources)
         }
         getByName("jvmTest") {
@@ -51,6 +61,29 @@ kotlin {
         }
         getByName("jvmBench") {
             dependsOn(commonBench)
+            dependsOn(jvmMain)
+        }
+
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        val nativeTest by creating {
+            dependsOn(commonTest)
+        }
+        val nativeBench by creating {
+            dependsOn(commonBench)
+        }
+        targets.withType<KotlinNativeTargetWithHostTests> {
+            val targetMain = getByName("${name}Main") {
+                dependsOn(nativeMain)
+            }
+            getByName("${name}Test") {
+                dependsOn(nativeTest)
+            }
+            getByName("${name}Bench") {
+                dependsOn(nativeBench)
+                dependsOn(targetMain)
+            }
         }
     }
 }
@@ -62,6 +95,9 @@ allOpen {
 benchmark {
     targets {
         register("jvmBench")
+        kotlin.targets.withType<KotlinNativeTargetWithHostTests> {
+            register("${name}Bench")
+        }
     }
 
     configurations {
@@ -77,7 +113,7 @@ benchmark {
 val jvmJar by tasks.existing
 val jvmRuntimeClasspath by configurations.existing
 
-tasks.register<JavaExec>("jvmRun") {
+tasks.register<JavaExec>("runJvm") {
     description = "Runs this project as a JVM application"
     group = APPLICATION_GROUP
     classpath(jvmJar, jvmRuntimeClasspath)
