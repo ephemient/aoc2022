@@ -1,4 +1,4 @@
-use itertools::Itertools;
+use super::util::iter_chunks;
 
 fn items(input: &[u8]) -> u64 {
     input.iter().fold(0, |acc, byte| {
@@ -32,12 +32,10 @@ where
     I: IntoIterator<Item = &'a S>,
     S: AsRef<str> + 'a,
 {
-    lines
-        .into_iter()
-        .chunks(3)
-        .into_iter()
-        .filter_map(|chunk| {
+    iter_chunks(lines.into_iter())
+        .filter_map(|chunk: [_; 3]| {
             chunk
+                .into_iter()
                 .map(|line| items(line.as_ref().as_bytes()))
                 .reduce(|x, y| x & y)
         })
