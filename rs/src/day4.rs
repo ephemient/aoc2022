@@ -15,14 +15,8 @@ where
 {
     lines
         .into_iter()
-        .filter_map(|line| {
-            let (a, b, c, d) = parse(line.as_ref())?;
-            if a <= c && b >= d || a >= c && b <= d {
-                Some(())
-            } else {
-                None
-            }
-        })
+        .filter_map(|line| parse(line.as_ref()))
+        .filter(|(a, b, c, d)| a <= c && b >= d || a >= c && b <= d)
         .count()
 }
 
@@ -33,14 +27,8 @@ where
 {
     lines
         .into_iter()
-        .filter_map(|line| {
-            let (a, b, c, d) = parse(line.as_ref())?;
-            if a <= d && b >= c {
-                Some(())
-            } else {
-                None
-            }
-        })
+        .filter_map(|line| parse(line.as_ref()))
+        .filter(|(a, b, c, d)| a <= d && b >= c)
         .count()
 }
 
