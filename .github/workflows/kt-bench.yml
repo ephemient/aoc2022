@@ -81,7 +81,9 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: native-image
-          path: kt/graalvm/build/native/nativeJmhCompile/*
+          path: |
+            kt/graalvm/build/native/nativeJmhCompile/*
+            !**/*.txt
 
   run:
     needs: [ get-inputs, jmh-visualizer, build, graalvm-build ]
@@ -109,7 +111,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
       - name: Run JVM benchmarks
         run: |
           cat >config <<EOF
