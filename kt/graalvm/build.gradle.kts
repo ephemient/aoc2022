@@ -40,6 +40,7 @@ graalvmNative {
             buildArgs.add("-H:IncludeResources=day.*\\.txt")
         }
         create("jmh") {
+            imageName.set("${rootProject.name}-jmh")
             buildArgs.add("--initialize-at-build-time=org.openjdk.jmh.infra,org.openjdk.jmh.util.Utils,org.openjdk.jmh.runner.InfraControl,org.openjdk.jmh.runner.InfraControlL0,org.openjdk.jmh.runner.InfraControlL1,org.openjdk.jmh.runner.InfraControlL2,org.openjdk.jmh.runner.InfraControlL3,org.openjdk.jmh.runner.InfraControlL4")
             mainClass.set("org.openjdk.jmh.Main")
             classpath.from(jmhJar, copyJmhRunMetadata)
@@ -53,7 +54,7 @@ graalvmNative {
 tasks.named<NativeRunTask>("nativeJmhRun") {
     val reportFile = layout.buildDirectory.file("reports/benchmarks/jmhBench.json")
     outputs.file(reportFile).withPropertyName("reportFile")
-    runtimeArgs.addAll("-f", "0", "-r", "1", "-w", "1", "-wi", "0", "-i", "10")
+    runtimeArgs.addAll("-f", "0", "-r", "1", "-w", "1", "-wi", "0")
     runtimeArgs.addAll(provider { listOf("-rf", "json", "-rff", reportFile.get().asFile.absolutePath) })
 }
 
