@@ -7,6 +7,7 @@ import Day1 (day1a, day1b)
 import Day2 (day2a, day2b)
 import Day3 (day3a, day3b)
 import Day4 (day4a, day4b)
+import Day5 (day5a, day5b)
 import Paths_aoc2022 (getDataFileName)
 
 getDayInput :: Int -> IO Text
@@ -29,5 +30,9 @@ main = defaultMain
   , env (getDayInput 4) $ \input -> bgroup "Day 4"
       [ bench "part 1" $ nf day4a input
       , bench "part 2" $ nf day4b input
+      ]
+  , env (getDayInput 5) $ \input -> bgroup "Day 5"
+      [ bench "part 1" $ nf day5a input
+      , bench "part 2" $ nf day5b input
       ]
   ]
