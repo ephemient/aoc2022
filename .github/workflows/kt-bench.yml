@@ -76,7 +76,11 @@ jobs:
           cache: gradle
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: :graalvm:jmhRun :graalvm:nativeJmhCompile
+          arguments: :graalvm:jmhRun
+          build-root-directory: kt
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :graalvm:nativeJmhCompile
           build-root-directory: kt
       - uses: actions/upload-artifact@v3
         with:
@@ -120,7 +124,6 @@ jobs:
           traceFormat:text
           warmups:1
           iterationTime:1
-          mode:avgt
           EOF
           java -cp jvmBench/jars/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
       - name: Run Kotlin/Native benchmarks
@@ -131,7 +134,6 @@ jobs:
           traceFormat:text
           warmups:1
           iterationTime:1
-          mode:avgt
           EOF
           chmod +x linuxX64Bench/classes/*.kexe
           mkdir descriptions outputs
@@ -149,7 +151,7 @@ jobs:
       - name: Run Graal native-image benchmarks
         run: |
           chmod +x native-image/*
-          native-image/* -f 0 -r 1 -w 1 -wi 0 -i 10 -rf json -rff graalBench.json
+          native-image/* -f 0 -r 1 -w 1 -wi 0 -i 5 -rf json -rff graalBench.json
       - name: Create provided.js
         run: |
           shopt -s failglob
