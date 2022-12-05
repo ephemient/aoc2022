@@ -105,7 +105,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: native-image
-      - run: ls -lR
+          path: native-image
       - run: rm -rf jmh-visualizer
       - run: unzip -d jmh-visualizer jmh-visualizer.zip
       - uses: actions/setup-java@v3
@@ -122,8 +122,7 @@ jobs:
           iterationTime:1
           mode:avgt
           EOF
-          java -cp jvmBench/libs/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
-          java -cp jvmBench/libs/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
+          java -cp jvmBench/jars/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
       - name: Run Kotlin/Native benchmarks
         run: |
           cat >config <<EOF
@@ -136,17 +135,17 @@ jobs:
           EOF
           chmod +x linuxX64Bench/classes/*.kexe
           mkdir descriptions outputs
-          linuxX64Bench/classes/*.kexe config --list /dev/stdout descriptions
+          linuxX64Bench/classes/*.kexe config --list /dev/null descriptions
           descriptions=(descriptions/*.txt)
           for i in "${descriptions[@]}"; do
-            aoc2022_data=. linuxX64Bench/classes/*.kexe config --benchmark /dev/stdout "$i" "${i%.txt}.out"
+            aoc2022_data=. linuxX64Bench/classes/*.kexe config --benchmark /dev/null "$i" "${i%.txt}.out"
           done
           for ((i=0; i<${#descriptions[*]}; i++)); do
             [[ i -eq 0 ]] || echo
             printf '%s: ' "${descriptions[i]}"
             cat "${descriptions[i]%.txt}.out"
-          done > results.txt
-          aoc2022_data=. linuxX64Bench/classes/*.kexe config --store-results /dev/stdout results.txt
+          done >results.txt
+          aoc2022_data=. linuxX64Bench/classes/*.kexe config --store-results /dev/null results.txt
       - name: Run Graal native-image benchmarks
         run: |
           chmod +x native-image/*
