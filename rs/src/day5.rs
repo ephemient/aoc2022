@@ -38,7 +38,7 @@ where
             source.drain(..num).as_str().to_string()
         };
         let dest = stacks.get_mut(&y)?;
-        *dest = head + &dest;
+        *dest = head + dest;
         Some(())
     })
     .for_each(drop);
