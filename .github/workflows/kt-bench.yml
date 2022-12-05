@@ -121,7 +121,8 @@ jobs:
           iterationTime:1
           mode:avgt
           EOF
-          java -cp build/jvmBench/libs/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
+          java -cp jvmBench/libs/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
+          java -cp jvmBench/libs/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
       - name: Run Kotlin/Native benchmarks
         run: |
           cat >config <<EOF
@@ -132,19 +133,19 @@ jobs:
           iterationTime:1
           mode:avgt
           EOF
-          chmod +x build/linuxX64Bench/classes/*.kexe
+          chmod +x linuxX64Bench/classes/*.kexe
           mkdir descriptions outputs
-          build/linuxX64Bench/classes/*.kexe config --list /dev/stdout descriptions
+          linuxX64Bench/classes/*.kexe config --list /dev/stdout descriptions
           descriptions=(descriptions/*.txt)
           for i in "${descriptions[@]}"; do
-            aoc2022_data=. build/linuxX64Bench/classes/*.kexe config --benchmark /dev/stdout "$i" "${i%.txt}.out"
+            aoc2022_data=. linuxX64Bench/classes/*.kexe config --benchmark /dev/stdout "$i" "${i%.txt}.out"
           done
           for ((i=0; i<${#descriptions[*]}; i++)); do
             [[ i -eq 0 ]] || echo
             printf '%s: ' "${descriptions[i]}"
             cat "${descriptions[i]%.txt}.out"
           done > results.txt
-          aoc2022_data=. build/linuxX64Bench/classes/*.kexe config --store-results /dev/stdout results.txt
+          aoc2022_data=. linuxX64Bench/classes/*.kexe config --store-results /dev/stdout results.txt
       - name: Run Graal native-image benchmarks
         run: |
           chmod +x native-image/*
