@@ -105,6 +105,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: native-image
+      - run: ls -lR
       - run: rm -rf jmh-visualizer
       - run: unzip -d jmh-visualizer jmh-visualizer.zip
       - uses: actions/setup-java@v3
