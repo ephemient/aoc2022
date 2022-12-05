@@ -146,6 +146,29 @@ tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
 }
 
+afterEvaluate { // kotlinx.benchmark.gradle.BenchmarksPlugin performs work in afterEvaluate :(
+    val jvmBenchBenchmarkJar by configurations.creating {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                objects.named(TargetJvmEnvironment.STANDARD_JVM)
+            )
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            outgoing {
+                capability(ProjectDerivedCapability(project, "jmh"))
+            }
+        }
+    }
+    artifacts {
+        add(jvmBenchBenchmarkJar.name, tasks.named("jvmBenchBenchmarkJar"))
+    }
+}
+
 val detektKotlinScripts by tasks.registering(Detekt::class) {
     group = VERIFICATION_GROUP
     description = "Run detekt analysis for Kotlin scripts"
