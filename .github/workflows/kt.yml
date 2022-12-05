@@ -30,7 +30,22 @@ jobs:
           path: ~/.konan
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: check assembleBenchmarks
+          arguments: :check :assembleBenchmarks
+          build-root-directory: kt
+
+  graalvm-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: 17
+          components: native-image
+          cache: gradle
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :graalvm:nativeCompile :graalvm:nativeTest
           build-root-directory: kt
 
   gradle-wrapper-validation:

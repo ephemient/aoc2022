@@ -1,5 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.plugins.ApplicationPlugin.APPLICATION_GROUP
+import org.gradle.internal.component.external.model.ProjectDerivedCapability
+import org.gradle.internal.component.external.model.TestFixturesSupport
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
@@ -25,6 +27,26 @@ val jvmResources by tasks.registering(Sync::class) {
 kotlin {
     jvm {
         compilations.create("bench")
+        val jvmTestFixtures by configurations.creating {
+            val parent = configurations.getByName("jvmTestRuntimeClasspath")
+            extendsFrom(parent)
+            isCanBeConsumed = true
+            isCanBeResolved = false
+            attributes {
+                for (key in parent.attributes.keySet()) attribute(
+                    key as Attribute<Any>,
+                    parent.attributes.getAttribute(key)
+                )
+                attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            }
+            outgoing {
+                capability(ProjectDerivedCapability(project, TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME))
+            }
+        }
+        dependencies {
+            jvmTestFixtures(compilations.getByName("test").runtimeDependencyFiles)
+        }
     }
     presets.withType<KotlinNativeTargetWithHostTestsPreset> {
         targetFromPreset(this) {

@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         mavenCentral()
@@ -30,3 +32,4 @@ gradle.afterProject {
 }
 
 rootProject.name = "aoc2022"
+include("graalvm")

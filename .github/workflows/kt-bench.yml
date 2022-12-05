@@ -57,8 +57,10 @@ jobs:
             kt-${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*') }}-
             kt-${{ runner.os }}-konan-
           path: ~/.konan
-      - run: ./gradlew --no-daemon --info benchmark
-        working-directory: kt
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :benchmark
+          build-root-directory: kt
         env:
           aoc2022_data: ${{ github.workspace }}
       - name: Create provided.js
