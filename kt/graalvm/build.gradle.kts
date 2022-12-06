@@ -23,10 +23,9 @@ val jmhRun by tasks.registering(JavaExec::class) {
 }
 
 val copyJmhRunMetadata by tasks.registering(Sync::class) {
-    shouldRunAfter(jmhRun)
     destinationDir = File(buildDir, "generated/resources/jmhRunMetadata")
     into("META-INF/native-image") {
-        from(AgentConfigurationFactory.getAgentOutputDirectoryForTask(layout, "jmhRun"))
+        from(files(AgentConfigurationFactory.getAgentOutputDirectoryForTask(layout, "jmhRun")).builtBy(jmhRun))
     }
 }
 
@@ -77,4 +76,3 @@ tasks.test {
     testClassesDirs = files(testClassesDirs, classpath) // Scan for test classes in classpath
     useJUnitPlatform()
 }
-
