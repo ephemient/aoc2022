@@ -1,6 +1,7 @@
 """
 Day 5: Supply Stacks
 """
+
 from itertools import zip_longest
 
 SAMPLE_INPUT = [

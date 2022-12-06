@@ -2,24 +2,23 @@
 Advent of Code 2022 - my answers in Python
 """
 
-import io
 import sys
+from importlib import metadata, resources
 
-import pkg_resources
+from natsort import natsorted
 
 
 def main():
     # pylint: disable=missing-function-docstring
-    args = set(int(arg) for arg in sys.argv[1:] if arg.isnumeric())
-    days = pkg_resources.get_entry_map("aoc2022", "aoc2022.days")
-    for day, entry in sorted(days.items(), key=lambda item: int(item[0])):
-        if args and int(day) not in args:
+    names = set(f"day{arg}" for arg in sys.argv[1:] if arg.isnumeric())
+    days = metadata.entry_points().select(group="aoc2022.days")
+    for entry in natsorted(days, key=lambda entry: entry.name):
+        day = entry.name
+        if names and day not in names:
             continue
-        print(f"Day {day}")
-        with io.TextIOWrapper(
-            pkg_resources.resource_stream("aoc2022", f"day{day}.txt")
-        ) as handle:
-            data = handle.readlines()
+        print(f"Day {day.removeprefix('day')}")
+        with resources.files("aoc2022").joinpath(f"{day}.txt").open() as file:
+            data = file.readlines()
         for part in entry.load():
             print(part(data))
         print()
