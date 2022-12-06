@@ -43,6 +43,14 @@ fun main(args: Array<String>) {
         println(day5.part2())
         println()
     }
+
+    if (days?.contains(6) != false) {
+        val day6 = Day6(getInput(6))
+        println("Day 6")
+        println(day6.part1())
+        println(day6.part2())
+        println()
+    }
 }
 
 expect fun getInput(day: Int): List<String>
