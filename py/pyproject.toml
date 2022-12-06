@@ -22,7 +22,7 @@ python = "^3.11"
 [tool.poetry.dev-dependencies]
 black = "^22.10.0"
 isort = "^5.10.1"
-pylint = "^2.15.7"
+pylint = "^2.15.8"
 pytest = "^7.2.0"
 pytest-benchmark = { version = "^4.0.0", extras = ["histogram"] }
 
