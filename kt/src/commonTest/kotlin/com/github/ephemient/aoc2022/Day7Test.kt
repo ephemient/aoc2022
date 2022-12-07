@@ -7,11 +7,18 @@ class Day7Test {
     @Test
     fun part1() {
         assertEquals(95437, Day7(SAMPLE_INPUT).part1())
+        assertEquals(95437, Day7a(SAMPLE_INPUT).part1())
+        assertEquals(95437, Day7b(SAMPLE_INPUT).part1())
+        assertEquals(95437, Day7c(SAMPLE_INPUT).part1())
     }
 
     @Test
     fun part2() {
         assertEquals(24933642, Day7(SAMPLE_INPUT).part2())
+        assertEquals(24933642, Day7a(SAMPLE_INPUT).part2())
+        assertEquals(24933642, Day7b(SAMPLE_INPUT).part2())
+        assertEquals(24933642, Day7c(SAMPLE_INPUT).part2())
+        assertEquals(24933642, Day7c(SAMPLE_INPUT).part3())
     }
 
     companion object {
