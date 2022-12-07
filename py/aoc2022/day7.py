@@ -32,16 +32,15 @@ SAMPLE_INPUT = [
 
 
 def _parse(lines):
-    cwd, sizes = "/", defaultdict(int)
+    cwd, sizes = "", defaultdict(int)
     for line in lines:
         match line.split():
             case ("$", "cd", "/"):
-                cwd = "/"
+                cwd = ""
             case ("$", "cd", ".."):
-                if "/" in cwd:
-                    cwd = cwd[: cwd.rindex("/")]
+                cwd = cwd[: cwd.rindex("/") if "/" in cwd else 0]
             case ("$", "cd", path):
-                cwd = f"{cwd}/{path}"
+                cwd = f"{cwd}/{path}" if cwd else path
             case (size, *_):
                 try:
                     size = int(size)
@@ -50,9 +49,9 @@ def _parse(lines):
                 path = cwd
                 while True:
                     sizes[path] += size
-                    if path == "/":
+                    if not path:
                         break
-                    path = path[: path.rindex("/")] or "/"
+                    path = path[: path.rindex("/") if "/" in path else 0]
     return sizes
 
 
@@ -70,7 +69,7 @@ def part2(lines):
     24933642
     """
     sizes = _parse(lines)
-    total = sizes["/"]
+    total = sizes[""]
     for size in sorted(sizes.values()):
         if 70000000 - (total - size) >= 30000000:
             return size

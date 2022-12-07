@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate build_const;
 
-use aoc2022::{day1, day2, day3, day4, day5, day6};
+use aoc2022::{day1, day2, day3, day4, day5, day6, day7};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 build_const!("aoc2022");
@@ -30,6 +30,10 @@ fn aoc2022_bench(c: &mut Criterion) {
     let mut g = c.benchmark_group("day 6");
     g.bench_function("part 1", |b| b.iter(|| day6::part1(black_box(DAY6))));
     g.bench_function("part 2", |b| b.iter(|| day6::part2(black_box(DAY6))));
+    g.finish();
+    let mut g = c.benchmark_group("day 7");
+    g.bench_function("part 1", |b| b.iter(|| day7::part1(black_box(DAY7))));
+    g.bench_function("part 2", |b| b.iter(|| day7::part2(black_box(DAY7))));
     g.finish();
 }
 

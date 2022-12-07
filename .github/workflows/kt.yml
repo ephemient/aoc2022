@@ -30,7 +30,7 @@ jobs:
           path: ~/.konan
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: :check :assembleBenchmarks
+          arguments: :check :assembleBenchmarks detektAll
           build-root-directory: kt
 
   graalvm-build:

@@ -3,22 +3,22 @@ package com.github.ephemient.aoc2022
 @Day
 class Day7(lines: List<String>) {
     private val sizes = buildMap {
-        put("/", 0)
+        put("", 0)
         var cwd = ""
         for (line in lines) {
             val match = PATTERN.matchEntire(line) ?: continue
             match.groups[1]?.value?.let { dir ->
                 cwd = when (dir) {
-                    "/" -> "/"
-                    ".." -> cwd.substringBeforeLast('/').ifEmpty { "/" }
-                    else -> "$cwd/$dir"
+                    "/" -> ""
+                    ".." -> cwd.substringBeforeLast('/', "")
+                    else -> if (cwd.isEmpty()) dir else "$cwd/$dir"
                 }
             } ?: match.groups[2]?.value?.toIntOrNull()?.let { size ->
                 var dir = cwd
                 while (true) {
                     put(dir, getOrElse(dir) { 0 } + size)
-                    if (dir == "/") break
-                    dir = dir.substringBeforeLast('/').ifEmpty { "/" }
+                    if (dir.isEmpty()) break
+                    dir = dir.substringBeforeLast('/', "")
                 }
             }
         }
@@ -29,7 +29,7 @@ class Day7(lines: List<String>) {
 
     @Day.Part
     fun part2(): Int {
-        val total = sizes.getValue("/")
+        val total = sizes.getValue("")
         return sizes.values.sorted().first { 70000000 - (total - it) >= 30000000 }
     }
 }
