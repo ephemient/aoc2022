@@ -27,6 +27,16 @@ Run all checks, including [Detekt](https://detekt.github.io/) static code analys
 ./gradlew :check
 ```
 
+Build/run/test/benchmark with [GraalVM native-image](https://www.graalvm.org/latest/reference-manual/native-image/):
+
+```sh
+$GRAALVM_HOME/bin/gu install native-image
+./gradlew :graalvm:nativeCompile
+./gradlew :graalvm:nativeRun
+./gradlew :graalvm:nativeTest
+./gradlew :graalvm:nativeJmhRun
+```
+
 Check for newer versions of dependencies:
 
 ```sh

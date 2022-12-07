@@ -11,12 +11,26 @@ application {
     mainClass.set("com.github.ephemient.aoc2022.MainKt")
 }
 
+val graalvmJavaLauncher = javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(JavaVersion.current().majorVersion))
+    vendor.set(JvmVendorSpec.matching("GraalVM"));
+}
+
+tasks.run.configure {
+    javaLauncher.set(graalvmJavaLauncher)
+}
+
+tasks.test {
+    javaLauncher.set(graalvmJavaLauncher)
+}
+
 val jmhJar by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
 val jmhRun by tasks.registering(JavaExec::class) {
+    javaLauncher.set(graalvmJavaLauncher)
     classpath(jmhJar)
     mainClass.set("org.openjdk.jmh.Main")
     args("-f", "0", "-r", "1", "-w", "1", "-rf", "json", "-rff", "/dev/null", "-wi", "0", "-i", "1")
