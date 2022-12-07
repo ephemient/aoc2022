@@ -70,10 +70,7 @@ def part2(lines):
     """
     sizes = _parse(lines)
     total = sizes[""]
-    for size in sorted(sizes.values()):
-        if 70000000 - (total - size) >= 30000000:
-            return size
-    return total
+    return min(size for size in sizes.values() if 70000000 - (total - size) >= 30000000)
 
 
 parts = (part1, part2)

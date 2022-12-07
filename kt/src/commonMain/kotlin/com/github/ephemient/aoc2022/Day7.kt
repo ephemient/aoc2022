@@ -30,7 +30,7 @@ class Day7(lines: List<String>) {
     @Day.Part
     fun part2(): Int {
         val total = sizes.getValue("")
-        return sizes.values.sorted().first { 70000000 - (total - it) >= 30000000 }
+        return sizes.values.asSequence().filter { 70000000 - (total - it) >= 30000000 }.min()
     }
 }
 

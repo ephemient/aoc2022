@@ -5,10 +5,9 @@ Description:    <https://adventofcode.com/2022/day/7 Day 7: No Space Left On Dev
 {-# LANGUAGE OverloadedStrings, ViewPatterns #-}
 module Day7 (day7a, day7b) where
 
-import Data.List (find, foldl', sort, tails)
+import Data.List (find, foldl', tails)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map ((!), elems, insertWith, singleton)
-import Data.Maybe (fromJust)
 import Data.Text (Text)
 import qualified Data.Text as T (lines, stripPrefix)
 import qualified Data.Text.Read as T (decimal)
@@ -26,7 +25,7 @@ day7a :: Text -> Int
 day7a = sum . filter (<= 100000) . Map.elems . parse
 
 day7b :: Text -> Int
-day7b input = fromJust . find ok . sort $ Map.elems dirs where
+day7b input = minimum . filter ok $ Map.elems dirs where
     dirs = parse input
     total = dirs Map.! []
     ok x = 70000000 - (total - x) >= 30000000

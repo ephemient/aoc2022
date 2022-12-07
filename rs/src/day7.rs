@@ -61,11 +61,10 @@ where
 {
     let sizes = parse(lines);
     let total = sizes[""];
-    let mut sizes = sizes.into_values().collect::<Vec<_>>();
-    sizes.sort();
     sizes
-        .into_iter()
-        .find(|size| 70000000 - (total - size) >= 30000000)
+        .into_values()
+        .filter(|size| 70000000 - (total - size) >= 30000000)
+        .min()
         .unwrap_or(total)
 }
 
