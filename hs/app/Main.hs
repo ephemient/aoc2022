@@ -7,6 +7,7 @@ import Day3 (day3a, day3b)
 import Day4 (day4a, day4b)
 import Day5 (day5a, day5b)
 import Day6 (day6a, day6b)
+import Day7 (day7a, day7b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -36,3 +37,4 @@ main = do
     run 4 (either fail print) [day4a, day4b]
     run 5 TIO.putStrLn [day5a, day5b]
     run 6 (maybe (fail "(⊥)") print) [day6a, day6b]
+    run 7 print [day7a, day7b]
