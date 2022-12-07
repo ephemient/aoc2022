@@ -32,4 +32,4 @@ gradle.afterProject {
 }
 
 rootProject.name = "aoc2022"
-include("graalvm")
+include("graalvm", "processor")

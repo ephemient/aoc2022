@@ -1,10 +1,13 @@
 package com.github.ephemient.aoc2022
 
+@Day
 class Day3(private val lines: List<String>) {
+    @Day.Part
     fun part1(): Int = lines.sumOf {
         (it.items(end = it.length / 2) and it.items(start = it.length / 2)).bitSum()
     }
 
+    @Day.Part
     fun part2(): Int = lines.chunked(3).sumOf { (a, b, c) ->
         (a.items() and b.items() and c.items()).singleBit()
     }

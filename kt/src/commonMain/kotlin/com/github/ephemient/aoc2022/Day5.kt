@@ -1,5 +1,6 @@
 package com.github.ephemient.aoc2022
 
+@Day
 class Day5(lines: List<String>) {
     private val initialStacks: Map<Char, String>
     private val moves: List<Triple<Int, Char, Char>>
@@ -24,8 +25,10 @@ class Day5(lines: List<String>) {
         }
     }
 
+    @Day.Part
     fun part1(): String = solve(true)
 
+    @Day.Part
     fun part2(): String = solve(false)
 
     private fun solve(reverse: Boolean): String {

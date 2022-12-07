@@ -1,5 +1,6 @@
 package com.github.ephemient.aoc2022
 
+@Day
 class Day1(lines: List<String>) {
     private val sums = buildList {
         var sum = 0
@@ -15,8 +16,10 @@ class Day1(lines: List<String>) {
         add(sum)
     }
 
+    @Day.Part
     fun part1(): Int = sums.max()
 
+    @Day.Part
     fun part2(): Int {
         val sums = sums.toIntArray()
         sums.quickSelectDescending(2)

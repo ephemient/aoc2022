@@ -1,8 +1,10 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.plugins.ApplicationPlugin.APPLICATION_GROUP
+import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.internal.component.external.model.TestFixturesSupport
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
 
@@ -12,6 +14,7 @@ plugins {
     alias(libs.plugins.dependency.updates)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinx.benchmark)
+    alias(libs.plugins.ksp)
 }
 
 dependencies {
@@ -47,6 +50,7 @@ kotlin {
         dependencies {
             jvmTestFixtures(compilations.getByName("test").runtimeDependencyFiles)
         }
+        project.dependencies.add("ksp${name.capitalized()}", projects.processor)
     }
     presets.withType<KotlinNativeTargetWithHostTestsPreset> {
         targetFromPreset(this) {
@@ -54,6 +58,7 @@ kotlin {
                 entryPoint("com.github.ephemient.aoc2022.main")
             }
             compilations.create("bench")
+            project.dependencies.add("ksp${name.capitalized()}", projects.processor)
         }
     }
 
@@ -71,6 +76,20 @@ kotlin {
             }
         }
 
+        fun KotlinSourceSet.syncKspKotlinMain() {
+            val targetName = name.removeSuffix("Bench")
+            val syncKspTask = tasks.register<Sync>("syncKsp${name.capitalized()}Sources") {
+                into(layout.buildDirectory.dir("generated/source/kotlin/$name"))
+                from(
+                    files(layout.buildDirectory.dir("generated/ksp/$targetName/${targetName}Main/resources"))
+                        .builtBy("kspKotlin${targetName.capitalized()}")
+                )
+                include("**/*Bench.kt.txt")
+                eachFile { name = name.removeSuffix(".txt") }
+            }
+            kotlin.srcDir(syncKspTask)
+        }
+
         val jvmMain by getting {
             resources.srcDir(jvmResources)
         }
@@ -84,6 +103,7 @@ kotlin {
         getByName("jvmBench") {
             dependsOn(commonBench)
             dependsOn(jvmMain)
+            syncKspKotlinMain()
         }
 
         val nativeMain by creating {
@@ -105,7 +125,12 @@ kotlin {
             getByName("${name}Bench") {
                 dependsOn(nativeBench)
                 dependsOn(targetMain)
+                syncKspKotlinMain()
             }
+        }
+
+        all {
+            if (name.endsWith("Main")) resources.exclude("**/*Bench.kt.txt")
         }
     }
 }
@@ -132,7 +157,9 @@ benchmark {
     }
 }
 
-val jvmJar by tasks.existing
+val jvmJar by tasks.existing(Jar::class) {
+    exclude("**/*Bench.kt.txt")
+}
 val jvmRuntimeClasspath by configurations.existing
 
 tasks.register<JavaExec>("runJvm") {
