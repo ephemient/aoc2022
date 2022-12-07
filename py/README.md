@@ -32,6 +32,6 @@ Lint and format code with [Black](https://black.readthedocs.io/), [pylint](https
 
 ```sh
 poetry run black .
-poetry run pylint aoc2022
 poetry run isort .
+poetry run pylint aoc2022
 ```
