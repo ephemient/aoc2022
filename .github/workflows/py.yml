@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: 3.11
       - uses: snok/install-poetry@v1
-      - run: poetry install --no-interaction --no-root
+      - run: poetry install --no-interaction
         working-directory: py
       - run: poetry run pylint aoc2022
         working-directory: py
