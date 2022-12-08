@@ -131,6 +131,7 @@ jobs:
           traceFormat:text
           warmups:1
           iterationTime:1
+          outputTimeUnit:SECONDS
           EOF
           chmod +x linuxX64Bench/classes/*.kexe
           mkdir descriptions outputs
