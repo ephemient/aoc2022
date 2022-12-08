@@ -120,6 +120,7 @@ jobs:
           traceFormat:text
           warmups:1
           iterationTime:1
+          outputTimeUnit:SECONDS
           EOF
           java -cp jvmBench/jars/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
       - name: Run Kotlin/Native benchmarks
