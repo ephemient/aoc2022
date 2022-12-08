@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::VecDeque;
 use std::iter::Enumerate;
 
 fn scan_visibility<I: Iterator>(iter: I) -> ScanVisibility<I> {
@@ -71,12 +71,12 @@ where
 fn scan_score<I: Iterator>(iter: I) -> ScanScore<I> {
     ScanScore {
         iter: iter.enumerate(),
-        horizon: BTreeMap::new(),
+        horizon: VecDeque::new(),
     }
 }
 struct ScanScore<I: Iterator> {
     iter: Enumerate<I>,
-    horizon: BTreeMap<<I as Iterator>::Item, usize>,
+    horizon: VecDeque<(<I as Iterator>::Item, usize)>,
 }
 impl<I> Iterator for ScanScore<I>
 where
@@ -86,10 +86,17 @@ where
     type Item = usize;
     fn next(&mut self) -> Option<Self::Item> {
         let (index, item) = self.iter.next()?;
-        let mut horizon = self.horizon.split_off(&item);
-        let prev = horizon.values().next().copied().unwrap_or(0);
-        horizon.insert(item, index);
-        self.horizon = horizon;
+        self.horizon.drain(
+            ..self
+                .horizon
+                .binary_search_by(|(key, _)| key.cmp(&item))
+                .map_or_else(|x| x, |x| x),
+        );
+        let prev = self.horizon.front().map_or(0, |(_, prev)| *prev);
+        match self.horizon.front_mut().filter(|(key, _)| key == &item) {
+            Some((_, e)) => *e = index,
+            _ => self.horizon.push_front((item, index)),
+        }
         Some(index - prev)
     }
 }
