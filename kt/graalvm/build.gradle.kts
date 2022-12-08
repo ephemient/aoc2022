@@ -33,7 +33,7 @@ val jmhRun by tasks.registering(JavaExec::class) {
     javaLauncher.set(graalvmJavaLauncher)
     classpath(jmhJar)
     mainClass.set("org.openjdk.jmh.Main")
-    args("-f", "0", "-r", "1", "-w", "1", "-rf", "json", "-rff", "/dev/null", "-wi", "0", "-i", "1")
+    args("-f", "0", "-r", "1", "-tu", "s", "-w", "1", "-rf", "json", "-rff", "/dev/null", "-wi", "0", "-i", "1")
 }
 
 val copyJmhRunMetadata by tasks.registering(Sync::class) {
@@ -67,7 +67,7 @@ graalvmNative {
 tasks.named<NativeRunTask>("nativeJmhRun") {
     val reportFile = layout.buildDirectory.file("reports/benchmarks/jmhBench.json")
     outputs.file(reportFile).withPropertyName("reportFile")
-    runtimeArgs.addAll("-f", "0", "-r", "1", "-w", "1", "-wi", "0")
+    runtimeArgs.addAll("-f", "0", "-r", "1", "-tu", "s", "-w", "1", "-wi", "0")
     runtimeArgs.addAll(provider { listOf("-rf", "json", "-rff", reportFile.get().asFile.absolutePath) })
 }
 

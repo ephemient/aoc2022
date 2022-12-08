@@ -151,6 +151,7 @@ benchmark {
         named("main") {
             warmups = 1
             iterationTime = 1
+            outputTimeUnit = "SECONDS"
             project.findProperty("benchmarkInclude")?.let { include(it.toString()) }
             project.findProperty("benchmarkExclude")?.let { exclude(it.toString()) }
         }
