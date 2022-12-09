@@ -52,28 +52,37 @@ where
 }
 
 fn follow<I: Iterator>(iter: I) -> Follow<I> {
-    Follow { iter, pos: (0, 0) }
+    Follow { iter, pos: None }
 }
 struct Follow<I: Iterator> {
     iter: I,
-    pos: (i32, i32),
+    pos: Option<(i32, i32)>,
 }
 impl<I: Iterator<Item = (i32, i32)>> Iterator for Follow<I> {
     type Item = (i32, i32);
     fn next(&mut self) -> Option<Self::Item> {
-        let head = self.iter.next()?;
-        let tail = self.pos;
-        let delta = (head.0 - tail.0, head.1 - tail.1);
-        self.pos = if delta.0.abs() <= 1 && delta.1.abs() <= 1 {
-            tail
-        } else if delta.0.abs() < delta.1.abs() {
-            (head.0, head.1 - delta.1.signum())
-        } else if delta.0.abs() > delta.1.abs() {
-            (head.0 - delta.0.signum(), head.1)
-        } else {
-            (head.0 - delta.0.signum(), head.1 - delta.1.signum())
+        let Some(tail) = self.pos else {
+            self.pos = Some((0, 0));
+            return Some((0, 0));
         };
-        Some(self.pos)
+        let head = self
+            .iter
+            .find(|head| (head.0 - tail.0).abs() > 1 || (head.1 - tail.1).abs() > 1)?;
+        let delta = (head.0 - tail.0, head.1 - tail.1);
+        let pos = (
+            if delta.0.abs() >= delta.1.abs() {
+                head.0 - delta.0.signum()
+            } else {
+                head.0
+            },
+            if delta.0.abs() <= delta.1.abs() {
+                head.1 - delta.1.signum()
+            } else {
+                head.1
+            },
+        );
+        self.pos = Some(pos);
+        Some(pos)
     }
 }
 
