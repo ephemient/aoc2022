@@ -10,14 +10,11 @@ class Day9(lines: List<String>) {
         var y = 0
         yield(IntPair(x, y))
         for (line in lines) {
-            repeat(line.drop(2).toInt()) {
-                when (line[0]) {
-                    'L' -> x--
-                    'R' -> x++
-                    'U' -> y--
-                    'D' -> y++
-                }
-                yield(IntPair(x, y))
+            when (line[0]) {
+                'L' -> repeat(line.drop(2).toInt()) { yield(IntPair(--x, y)) }
+                'R' -> repeat(line.drop(2).toInt()) { yield(IntPair(++x, y)) }
+                'U' -> repeat(line.drop(2).toInt()) { yield(IntPair(x, --y)) }
+                'D' -> repeat(line.drop(2).toInt()) { yield(IntPair(x, ++y)) }
             }
         }
     }
