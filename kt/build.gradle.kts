@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPre
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.allopen")
     alias(libs.plugins.dependency.updates)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinx.benchmark)
@@ -133,10 +132,6 @@ kotlin {
             if (name.endsWith("Main")) resources.exclude("**/*Bench.kt.txt")
         }
     }
-}
-
-allOpen {
-    annotation("org.openjdk.jmh.annotations.State")
 }
 
 benchmark {

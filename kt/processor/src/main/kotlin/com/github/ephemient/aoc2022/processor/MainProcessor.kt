@@ -34,13 +34,13 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val containers = resolver.getSymbolsWithAnnotation("com.github.ephemient.aoc2022.Day")
             .filterIsInstance<KSClassDeclaration>()
-            .toList()
             .sortedWith(
                 compareBy(
                     compareBy<String, Int?>(nullsLast(naturalOrder())) { it.removePrefix("Day").toIntOrNull() }
                         .thenBy { it }
                 ) { it.simpleName.asString() }
             )
+            .toSet()
         val allParts = resolver.getSymbolsWithAnnotation("com.github.ephemient.aoc2022.Day.Part")
             .filterIsInstance<KSFunctionDeclaration>()
             .groupBy { it.parentDeclaration }
@@ -85,6 +85,7 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
             val simpleName = (container.qualifiedName ?: continue).asString().removePrefix("$packageName.")
                 .replace('.', '_') + "Bench"
             val benchSpec = TypeSpec.classBuilder(simpleName)
+                .addModifiers(KModifier.OPEN)
                 .addAnnotation(
                     AnnotationSpec.builder(ClassName("kotlinx.benchmark", "State"))
                         .addMember("%T.%N", ClassName("kotlinx.benchmark", "Scope"), "Benchmark")
