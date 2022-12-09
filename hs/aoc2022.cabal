@@ -38,6 +38,7 @@ library
     build-depends:
         base ^>=4.16.0.0
       , containers ^>=0.6.5.1
+      , primitive ^>=0.7.4.0
       , split ^>=0.2.3.5
       , template-haskell ^>=2.18.0.0
       , text ^>=2.0.0
