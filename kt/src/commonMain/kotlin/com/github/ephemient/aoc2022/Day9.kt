@@ -37,13 +37,16 @@ class Day9(lines: List<String>) {
         .size
 }
 
-private fun Sequence<IntPair>.follow(): Sequence<IntPair> = scan(IntPair(0, 0)) { tail, (headX, headY) ->
-    val dx = headX - tail.first
-    val dy = headY - tail.second
-    when {
-        dx.absoluteValue <= 1 && dy.absoluteValue <= 1 -> tail
-        dx.absoluteValue < dy.absoluteValue -> IntPair(headX, headY - dy.sign)
-        dx.absoluteValue > dy.absoluteValue -> IntPair(headX - dx.sign, headY)
-        else -> IntPair(headX - dx.sign, headY - dy.sign)
+private fun Sequence<IntPair>.follow(): Sequence<IntPair> = sequence {
+    var tailX = 0
+    var tailY = 0
+    yield(IntPair(tailX, tailY))
+    for ((headX, headY) in this@follow) {
+        val deltaX = headX - tailX
+        val deltaY = headY - tailY
+        if (deltaX.absoluteValue <= 1 && deltaY.absoluteValue <= 1) continue
+        tailX = if (deltaX.absoluteValue >= deltaY.absoluteValue) headX - deltaX.sign else headX
+        tailY = if (deltaX.absoluteValue <= deltaY.absoluteValue) headY - deltaY.sign else headY
+        yield(IntPair(tailX, tailY))
     }
 }
