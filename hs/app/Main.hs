@@ -9,6 +9,7 @@ import Day5 (day5a, day5b)
 import Day6 (day6a, day6b)
 import Day7 (day7a, day7b)
 import Day8 (day8a, day8b)
+import Day9 (day9a, day9b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -40,3 +41,4 @@ main = do
     run 6 (maybe (fail "(⊥)") print) [day6a, day6b]
     run 7 print [day7a, day7b]
     run 8 print [day8a, day8b]
+    run 9 print [day9a, day9b]
