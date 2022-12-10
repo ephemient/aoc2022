@@ -7,6 +7,10 @@ use std::iter::FromIterator;
 use std::path::Path;
 
 fn main() -> io::Result<()> {
+    for day in 1..=25 {
+        println!("cargo:rerun-if-changed=../day{}.txt", day);
+    }
+
     let days = BTreeMap::from_iter(
         fs::read_dir(
             Path::new(
