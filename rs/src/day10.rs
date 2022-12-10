@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::str::FromStr;
 
 enum Instruction {
@@ -89,6 +88,7 @@ where
                 })
                 .collect::<String>()
         })
+        .collect::<Vec<_>>()
         .join("\n")
 }
 
