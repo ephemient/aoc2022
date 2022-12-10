@@ -26,28 +26,26 @@ class Day10(lines: List<String>) {
     }
 
     @Day.Part
-    fun part2(): String = buildList {
+    fun part2(): String = buildString(245) {
         val iterator = instructions.iterator()
         var cycle = 0
         var x = 1
-        repeat(6) { row ->
-            val line = buildString {
-                repeat(40) { col ->
-                    append(if (x - col in -1..1) '\u2593' else '\u2591')
-                    while (cycle < 40 * row + col) {
-                        when (val instruction = iterator.next()) {
-                            Instruction.Noop -> cycle++
-                            is Instruction.AddX -> {
-                                cycle += 2
-                                x += instruction.dx
-                            }
+        for (row in 0 until 240 step 40) {
+            if (row != 0) append('\n')
+            repeat(40) { col ->
+                append(if (x - col in -1..1) '\u2593' else '\u2591')
+                while (cycle < row + col) {
+                    when (val instruction = iterator.next()) {
+                        Instruction.Noop -> cycle++
+                        is Instruction.AddX -> {
+                            cycle += 2
+                            x += instruction.dx
                         }
                     }
                 }
             }
-            add(line)
         }
-    }.joinToString("\n")
+    }
 
     private sealed class Instruction {
         object Noop : Instruction()
