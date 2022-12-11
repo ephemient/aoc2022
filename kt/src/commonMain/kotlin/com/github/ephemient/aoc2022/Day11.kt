@@ -21,15 +21,15 @@ class Day11(lines: List<String>) {
     }
 
     @Day.Part
-    fun part1(): Int = solve(20) { it.floorDiv(3) }
+    fun part1(): Long = solve(20) { it.floorDiv(3) }
 
     @Day.Part
-    fun part2(): Int {
+    fun part2(): Long {
         val base = monkeys.values.fold(1L) { acc, monkey -> acc * monkey.test }
         return solve(10000) { it.mod(base) }
     }
 
-    private fun solve(iterations: Int, post: (Long) -> Long): Int {
+    private fun solve(iterations: Int, post: (Long) -> Long): Long {
         val currentItems = monkeys.mapValues { it.value.startingItems.toMutableList() }
         val counts = IntArray(monkeys.size) { 0 }
         repeat(iterations) {
@@ -44,7 +44,7 @@ class Day11(lines: List<String>) {
             }
         }
         counts.sortDescending()
-        return counts[0] * counts[1]
+        return counts[0].toLong() * counts[1].toLong()
     }
 
     private data class Monkey(
