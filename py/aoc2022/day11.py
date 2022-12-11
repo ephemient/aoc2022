@@ -48,8 +48,8 @@ class _Monkey:
     if_false: int
 
 
-def _square(x):
-    return x * x
+def _square(value):
+    return value * value
 
 
 def _parse(lines):
@@ -81,7 +81,7 @@ def _parse(lines):
 
 def _solve(monkeys, iterations, post):
     counts = [0] * len(monkeys)
-    for j in range(iterations):
+    for _ in range(iterations):
         for i, monkey in enumerate(monkeys):
             items = monkey.items[:]
             monkey.items[:] = []
