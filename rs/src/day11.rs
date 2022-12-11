@@ -109,10 +109,10 @@ fn solve<F: FnMut(u64) -> u64>(monkeys: &mut [Monkey], n: usize, mut f: F) -> u6
     }
     counts.sort();
     counts
-        .iter()
+        .into_iter()
         .rev()
         .take(2)
-        .fold(1, |acc, x| acc * (*x as u64))
+        .fold(1, |acc, x| acc * x as u64)
 }
 
 pub fn part1<'a, I, S>(lines: I) -> u64
