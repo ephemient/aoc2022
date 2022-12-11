@@ -22,11 +22,11 @@ impl FromStr for Operation {
     }
 }
 impl Operation {
-    fn apply(&self, x: u64) -> u64 {
+    fn apply(self, x: u64) -> u64 {
         match self {
             Self::Square => x * x,
-            Self::Mul(y) => x * *y as u64,
-            Self::Add(y) => x + *y as u64,
+            Self::Mul(y) => x * y as u64,
+            Self::Add(y) => x + y as u64,
         }
     }
 }
