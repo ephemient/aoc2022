@@ -21,6 +21,7 @@ data-files:
   , day8.txt
   , day9.txt
   , day10.txt
+  , day11.txt
 
 extra-source-files:
     README.md
@@ -37,9 +38,11 @@ library
       , Day8
       , Day9
       , Day10
+      , Day11
     build-depends:
         base ^>=4.16.0.0
       , containers ^>=0.6.5.1
+      , megaparsec ^>=9.3.0
       , primitive ^>=0.7.4.0
       , split ^>=0.2.3.5
       , template-haskell ^>=2.18.0.0
@@ -55,6 +58,7 @@ executable aoc2022-exe
     build-depends:
         aoc2022
       , base ^>=4.16.0.0
+      , megaparsec ^>=9.3.0
       , text ^>=2.0.0
     other-modules:
         Paths_aoc2022
@@ -82,6 +86,7 @@ test-suite aoc2022-test
       , Day8Spec
       , Day9Spec
       , Day10Spec
+      , Day11Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:

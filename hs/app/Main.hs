@@ -11,6 +11,7 @@ import Day7 (day7a, day7b)
 import Day8 (day8a, day8b)
 import Day9 (day9a, day9b)
 import Day10 (day10a, day10b)
+import Day11 (day11a, day11b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -18,6 +19,7 @@ import Data.Text (Text)
 import qualified Data.Text.IO as TIO (putStrLn, readFile)
 import Paths_aoc2022 (getDataFileName)
 import System.Environment (getArgs)
+import Text.Megaparsec (errorBundlePretty)
 import Text.Read (readMaybe)
 
 getDayInput :: Int -> IO Text
@@ -44,3 +46,4 @@ main = do
     run 8 print [day8a, day8b]
     run 9 print [day9a, day9b]
     run 10 putStrLn [show . day10a, day10b]
+    run 11 (either (fail . errorBundlePretty) print) [day11a, day11b]
