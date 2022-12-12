@@ -2,15 +2,29 @@ package com.github.ephemient.aoc2022
 
 @Day
 class Day12(private val lines: List<String>) {
-    @Day.Part
-    fun part1(): Int? = bfs(locationOf('S')) { from -> from.filteredNeighbors { to -> canMove(from, to) } }
-        .firstOrNull { (_, value) -> lines[value.first][value.second] == 'E' }
-        ?.index
+    private val part1: Int?
+    private val part2: Int?
+    init {
+        var part1: Int? = null
+        var part2: Int? = null
+        @Suppress("LoopWithTooManyJumpStatements")
+        for ((value, point) in bfs(locationOf('E')) { to -> to.filteredNeighbors { from -> canMove(from, to) } }) {
+            when (lines[point.first][point.second]) {
+                'S' -> part1 = part1 ?: value
+                'a' -> part2 = part2 ?: value
+                else -> continue
+            }
+            if (part1 != null && part2 != null) break
+        }
+        this.part1 = part1
+        this.part2 = part2
+    }
 
     @Day.Part
-    fun part2(): Int? = bfs(locationOf('E')) { to -> to.filteredNeighbors { from -> canMove(from, to) } }
-        .firstOrNull { (_, value) -> lines[value.first][value.second] == 'a' }
-        ?.index
+    fun part1(): Int? = part1
+
+    @Day.Part
+    fun part2(): Int? = part2
 
     private fun locationOf(char: Char): IntPair {
         lines.forEachIndexed { y, line ->
@@ -27,7 +41,7 @@ class Day12(private val lines: List<String>) {
     private fun canMove(from: IntPair, to: IntPair): Boolean {
         val a = lines[from.first][from.second]
         val b = lines[to.first][to.second]
-        return if (a == 'S') b == 'a' else if (b == 'E') a == 'z' else b - a <= 1
+        return b.mappedCode - a.mappedCode <= 1
     }
 }
 
@@ -39,3 +53,10 @@ private fun <T> bfs(start: T, next: (T) -> Iterable<T>): Sequence<IndexedValue<T
         for (b in next(a)) if (seen.add(b)) queue.add(IndexedValue(i + 1, b))
     }
 }
+
+private val Char.mappedCode: Int
+    get() = when (this) {
+        'S' -> 'a'
+        'E' -> 'z'
+        else -> this
+    }.code
