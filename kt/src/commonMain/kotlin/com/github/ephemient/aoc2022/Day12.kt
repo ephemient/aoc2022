@@ -2,37 +2,23 @@ package com.github.ephemient.aoc2022
 
 @Day
 class Day12(private val lines: List<String>) {
-    private val part1: Int?
-    private val part2: Int?
-    init {
-        var part1: Int? = null
-        var part2: Int? = null
-        @Suppress("LoopWithTooManyJumpStatements")
-        for ((value, point) in bfs(locationOf('E')) { to -> to.filteredNeighbors { from -> canMove(from, to) } }) {
+    private val result = bfs(
+        lines.withIndex().firstNotNullOf { (y, line) -> line.indexOf('E').takeIf { it >= 0 }?.let { x -> y to x } }
+    ) { to -> to.filteredNeighbors { from -> canMove(from, to) } }
+        .scan(-1 to -1) { result, (value, point) ->
             when (lines[point.first][point.second]) {
-                'S' -> part1 = part1 ?: value
-                'a' -> part2 = part2 ?: value
-                else -> continue
+                'S' -> if (result.first < 0) return@scan result.copy(first = value)
+                'a' -> if (result.second < 0) return@scan result.copy(second = value)
             }
-            if (part1 != null && part2 != null) break
+            result
         }
-        this.part1 = part1
-        this.part2 = part2
-    }
+        .first { it.first >= 0 && it.second >= 0 }
 
     @Day.Part
-    fun part1(): Int? = part1
+    fun part1(): Int = result.first
 
     @Day.Part
-    fun part2(): Int? = part2
-
-    private fun locationOf(char: Char): IntPair {
-        lines.forEachIndexed { y, line ->
-            val x = line.indexOf(char)
-            if (x >= 0) return y to x
-        }
-        throw NoSuchElementException()
-    }
+    fun part2(): Int = result.second
 
     private inline fun IntPair.filteredNeighbors(predicate: (IntPair) -> Boolean): List<IntPair> =
         arrayOf(first - 1 to second, first to second - 1, first to second + 1, first + 1 to second)
