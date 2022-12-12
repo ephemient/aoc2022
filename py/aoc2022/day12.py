@@ -1,7 +1,6 @@
 """
 Day 12: Hill Climbing Algorithm
 """
-# pylint: disable=invalid-name
 
 from collections import deque
 
@@ -25,30 +24,33 @@ def part1(lines):
     31
     """
     (start,) = (
-        (y, x) for y, line in enumerate(lines) for x, c in enumerate(line) if c == "S"
+        (row, col)
+        for row, line in enumerate(lines)
+        for col, c in enumerate(line)
+        if c == "S"
     )
 
     def neighbors(point):
-        y0, x0 = point
-        a = lines[y0][x0]
-        for y1 in range(y0 - 1, y0 + 2):
-            if y1 not in range(len(lines)):
+        row0, col0 = point
+        src = lines[row0][col0]
+        for row1 in range(row0 - 1, row0 + 2):
+            if row1 not in range(len(lines)):
                 continue
-            for x1 in range(x0 - 1, x0 + 2) if y0 == y1 else (x0,):
-                if x1 not in range(len(lines[y1])):
+            for col1 in range(col0 - 1, col0 + 2) if row0 == row1 else (col0,):
+                if col1 not in range(len(lines[row1])):
                     continue
-                b = lines[y1][x1]
+                dst = lines[row1][col1]
                 if (
-                    b == "a"
-                    if a == "S"
-                    else a == "z"
-                    if b == "E"
-                    else ord(b) - ord(a) <= 1
+                    dst == "a"
+                    if src == "S"
+                    else src == "z"
+                    if dst == "E"
+                    else ord(dst) - ord(src) <= 1
                 ):
-                    yield y1, x1
+                    yield row1, col1
 
-    for (y, x), depth in _bfs(start, neighbors):
-        if lines[y][x] == "E":
+    for (row, col), depth in _bfs(start, neighbors):
+        if lines[row][col] == "E":
             return depth
     return None
 
@@ -59,24 +61,27 @@ def part2(lines):
     29
     """
     (start,) = (
-        (y, x) for y, line in enumerate(lines) for x, c in enumerate(line) if c == "E"
+        (row, col)
+        for row, line in enumerate(lines)
+        for col, c in enumerate(line)
+        if c == "E"
     )
 
     def neighbors(point):
-        y0, x0 = point
-        a = lines[y0][x0]
-        for y1 in range(y0 - 1, y0 + 2):
-            if y1 not in range(len(lines)):
+        row0, col0 = point
+        src = lines[row0][col0]
+        for row1 in range(row0 - 1, row0 + 2):
+            if row1 not in range(len(lines)):
                 continue
-            for x1 in range(x0 - 1, x0 + 2) if y0 == y1 else (x0,):
-                if x1 not in range(len(lines[y1])):
+            for col1 in range(col0 - 1, col0 + 2) if row0 == row1 else (col0,):
+                if col1 not in range(len(lines[row1])):
                     continue
-                b = lines[y1][x1]
-                if b == "z" if a == "E" else ord(a) - ord(b) <= 1:
-                    yield y1, x1
+                dst = lines[row1][col1]
+                if dst == "z" if src == "E" else ord(src) - ord(dst) <= 1:
+                    yield row1, col1
 
-    for (y, x), depth in _bfs(start, neighbors):
-        if lines[y][x] == "a":
+    for (row, col), depth in _bfs(start, neighbors):
+        if lines[row][col] == "a":
             return depth
     return None
 
