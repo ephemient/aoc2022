@@ -18,47 +18,10 @@ def _bfs(start, neighbors):
             queue.append((neighbor, depth + 1))
 
 
-def part1(lines):
+def both_parts(lines):
     """
-    >>> part1(["Sabqponm", "abcryxxl", "accszExk", "acctuvwj", "abdefghi"])
-    31
-    """
-    (start,) = (
-        (row, col)
-        for row, line in enumerate(lines)
-        for col, c in enumerate(line)
-        if c == "S"
-    )
-
-    def neighbors(point):
-        row0, col0 = point
-        src = lines[row0][col0]
-        for row1 in range(row0 - 1, row0 + 2):
-            if row1 not in range(len(lines)):
-                continue
-            for col1 in range(col0 - 1, col0 + 2) if row0 == row1 else (col0,):
-                if col1 not in range(len(lines[row1])):
-                    continue
-                dst = lines[row1][col1]
-                if (
-                    dst == "a"
-                    if src == "S"
-                    else src == "z"
-                    if dst == "E"
-                    else ord(dst) - ord(src) <= 1
-                ):
-                    yield row1, col1
-
-    for (row, col), depth in _bfs(start, neighbors):
-        if lines[row][col] == "E":
-            return depth
-    return None
-
-
-def part2(lines):
-    """
-    >>> part2(["Sabqponm", "abcryxxl", "accszExk", "acctuvwj", "abdefghi"])
-    29
+    >>> both_parts(["Sabqponm", "abcryxxl", "accszExk", "acctuvwj", "abdefghi"])
+    (31, 29)
     """
     (start,) = (
         (row, col)
@@ -70,6 +33,7 @@ def part2(lines):
     def neighbors(point):
         row0, col0 = point
         src = lines[row0][col0]
+        src = ord("a" if src == "S" else "z" if src == "E" else src)
         for row1 in range(row0 - 1, row0 + 2):
             if row1 not in range(len(lines)):
                 continue
@@ -77,13 +41,19 @@ def part2(lines):
                 if col1 not in range(len(lines[row1])):
                     continue
                 dst = lines[row1][col1]
-                if dst == "z" if src == "E" else ord(src) - ord(dst) <= 1:
+                dst = ord("a" if dst == "S" else "z" if dst == "E" else dst)
+                if src - dst <= 1:
                     yield row1, col1
 
+    part1, part2 = None, None
     for (row, col), depth in _bfs(start, neighbors):
-        if lines[row][col] == "a":
-            return depth
-    return None
+        if lines[row][col] == "S" and part1 is None:
+            part1 = depth
+        elif lines[row][col] == "a" and part2 is None:
+            part2 = depth
+        if part1 is not None and part2 is not None:
+            break
+    return part1, part2
 
 
-parts = (part1, part2)
+parts = (both_parts,)
