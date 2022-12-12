@@ -16,4 +16,4 @@ Development occurs in language-specific directories:
 |[Day9.hs](hs/src/Day9.hs)|[Day9.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day9.kt)|[day9.py](py/aoc2022/day9.py)|[day9.rs](rs/src/day9.rs)|
 |[Day10.hs](hs/src/Day10.hs)|[Day10.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day10.kt)|[day10.py](py/aoc2022/day10.py)|[day10.rs](rs/src/day10.rs)|
 |[Day11.hs](hs/src/Day11.hs)|[Day11.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day11.kt)|[day11.py](py/aoc2022/day11.py)|[day11.rs](rs/src/day11.rs)|
-|[Day12.hs](hs/src/Day12.hs)|
+|[Day12.hs](hs/src/Day12.hs)|[Day12.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day12.kt)|
