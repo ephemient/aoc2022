@@ -2,7 +2,7 @@ package com.github.ephemient.aoc2022
 
 @Day
 class Day2(lines: List<String>) {
-    private val inputs = lines.map { IntPair(it[0] - 'A' + 1, it[2] - 'X' + 1) }
+    private val inputs = lines.map { it[0] - 'A' + 1 to it[2] - 'X' + 1 }
 
     @Day.Part
     fun part1(): Int = inputs.sumOf { (first, second) -> score(first, second) }

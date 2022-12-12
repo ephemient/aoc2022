@@ -3,33 +3,31 @@ package com.github.ephemient.aoc2022
 @Day
 class Day12(private val lines: List<String>) {
     @Day.Part
-    fun part1(): Int? {
-        val start = lines.withIndex().firstNotNullOf { (y, line) ->
-            line.withIndex().find { (_, c) -> c == 'S' }?.let { (x, _) -> IntPair(y, x) }
-        }
-        return bfs(start) { (y, x) ->
-            val a = lines[y][x]
-            arrayOf(IntPair(y - 1, x), IntPair(y, x - 1), IntPair(y, x + 1), IntPair(y + 1, x)).filter { (y, x) ->
-                val b = lines.getOrNull(y)?.getOrNull(x) ?: return@filter false
-                if (a == 'S') b == 'a' else if (b == 'E') a == 'z' else b - a <= 1
-            }
-        }.firstOrNull { (_, value) -> lines[value.first][value.second] == 'E' }?.index
-    }
+    fun part1(): Int? = bfs(locationOf('S')) { from -> from.filteredNeighbors { to -> canMove(from, to) } }
+        .firstOrNull { (_, value) -> lines[value.first][value.second] == 'E' }
+        ?.index
 
     @Day.Part
-    fun part2(): Int? {
-        val start = lines.withIndex().firstNotNullOf { (y, line) ->
-            line.withIndex().find { (_, c) -> c == 'E' }?.let { (x, _) -> IntPair(y, x) }
+    fun part2(): Int? = bfs(locationOf('E')) { to -> to.filteredNeighbors { from -> canMove(from, to) } }
+        .firstOrNull { (_, value) -> lines[value.first][value.second] == 'a' }
+        ?.index
+
+    private fun locationOf(char: Char): IntPair {
+        lines.forEachIndexed { y, line ->
+            val x = line.indexOf(char)
+            if (x >= 0) return y to x
         }
-        return bfs(start) { (y, x) ->
-            val a = lines[y][x]
-            arrayOf(IntPair(y - 1, x), IntPair(y, x - 1), IntPair(y, x + 1), IntPair(y + 1, x)).filter { (y, x) ->
-                val b = lines.getOrNull(y)?.getOrNull(x) ?: return@filter false
-                if (a == 'E') b == 'z' else a - b <= 1
-            }
-        }.firstOrNull { (_, value) ->
-            lines[value.first][value.second] == 'a'
-        }?.index
+        throw NoSuchElementException()
+    }
+
+    private inline fun IntPair.filteredNeighbors(predicate: (IntPair) -> Boolean): List<IntPair> =
+        arrayOf(first - 1 to second, first to second - 1, first to second + 1, first + 1 to second)
+            .filter { it.first in lines.indices && it.second in lines[it.first].indices && predicate(it) }
+
+    private fun canMove(from: IntPair, to: IntPair): Boolean {
+        val a = lines[from.first][from.second]
+        val b = lines[to.first][to.second]
+        return if (a == 'S') b == 'a' else if (b == 'E') a == 'z' else b - a <= 1
     }
 }
 
@@ -37,12 +35,7 @@ private fun <T> bfs(start: T, next: (T) -> Iterable<T>): Sequence<IndexedValue<T
     val seen = mutableSetOf(start)
     val queue = ArrayDeque(listOf(IndexedValue(0, start)))
     while (queue.isNotEmpty()) {
-        val a = queue.removeFirst()
-        yield(a)
-        for (b in next(a.value)) {
-            if (seen.add(b)) {
-                queue.add(IndexedValue(a.index + 1, b))
-            }
-        }
+        val (i, a) = queue.removeFirst().also { yield(it) }
+        for (b in next(a)) if (seen.add(b)) queue.add(IndexedValue(i + 1, b))
     }
 }

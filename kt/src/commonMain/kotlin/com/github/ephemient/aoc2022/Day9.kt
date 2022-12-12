@@ -8,13 +8,13 @@ class Day9(lines: List<String>) {
     private val moves = sequence {
         var x = 0
         var y = 0
-        yield(IntPair(x, y))
+        yield(x to y)
         for (line in lines) {
             when (line[0]) {
-                'L' -> repeat(line.drop(2).toInt()) { yield(IntPair(--x, y)) }
-                'R' -> repeat(line.drop(2).toInt()) { yield(IntPair(++x, y)) }
-                'U' -> repeat(line.drop(2).toInt()) { yield(IntPair(x, --y)) }
-                'D' -> repeat(line.drop(2).toInt()) { yield(IntPair(x, ++y)) }
+                'L' -> repeat(line.drop(2).toInt()) { yield(--x to y) }
+                'R' -> repeat(line.drop(2).toInt()) { yield(++x to y) }
+                'U' -> repeat(line.drop(2).toInt()) { yield(x to --y) }
+                'D' -> repeat(line.drop(2).toInt()) { yield(x to ++y) }
             }
         }
     }
@@ -40,13 +40,13 @@ class Day9(lines: List<String>) {
 private fun Sequence<IntPair>.follow(): Sequence<IntPair> = sequence {
     var tailX = 0
     var tailY = 0
-    yield(IntPair(tailX, tailY))
+    yield(tailX to tailY)
     for ((headX, headY) in this@follow) {
         val deltaX = headX - tailX
         val deltaY = headY - tailY
         if (deltaX.absoluteValue <= 1 && deltaY.absoluteValue <= 1) continue
         tailX = if (deltaX.absoluteValue >= deltaY.absoluteValue) headX - deltaX.sign else headX
         tailY = if (deltaX.absoluteValue <= deltaY.absoluteValue) headY - deltaY.sign else headY
-        yield(IntPair(tailX, tailY))
+        yield(tailX to tailY)
     }
 }
