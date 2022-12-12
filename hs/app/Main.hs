@@ -12,6 +12,7 @@ import Day8 (day8a, day8b)
 import Day9 (day9a, day9b)
 import Day10 (day10a, day10b)
 import Day11 (day11a, day11b)
+import Day12 (day12a, day12b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -47,3 +48,4 @@ main = do
     run 9 print [day9a, day9b]
     run 10 putStrLn [show . day10a, day10b]
     run 11 (either (fail . errorBundlePretty) print) [day11a, day11b]
+    run 12 (maybe (fail "(⊥)") print) [day12a, day12b]
