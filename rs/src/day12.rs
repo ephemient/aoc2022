@@ -36,7 +36,7 @@ where
     }
 }
 
-pub fn part1<'a, I, S>(lines: I) -> Option<usize>
+pub fn both_parts<'a, I, S>(lines: I) -> (Option<usize>, Option<usize>)
 where
     I: IntoIterator<Item = &'a S>,
     S: AsRef<str> + 'a,
@@ -45,89 +45,54 @@ where
         .into_iter()
         .map(|line| line.as_ref().chars().collect())
         .collect::<Vec<Vec<_>>>();
-    Bfs::new(
-        lines.iter().enumerate().find_map(|(row, line)| {
-            line.iter()
-                .enumerate()
-                .find(|(_, c)| c == &&'S')
-                .map(|(col, _)| (row, col))
-        })?,
-        |&(row0, col0)| -> Vec<_> {
-            let a = lines[row0][col0];
-            (row0.saturating_sub(1)..min(row0 + 2, lines.len()))
-                .flat_map(|row1| {
-                    let line = &lines[row1];
-                    if row0 == row1 {
-                        col0.checked_sub(1)
-                    } else {
-                        None
-                    }
-                    .into_iter()
-                    .chain(iter::once(if row0 == row1 { col0 + 1 } else { col0 }))
-                    .filter(|col1| col1 < &line.len())
-                    .map(move |col1| (row1, col1))
-                })
-                .filter(|&(row1, col1)| {
-                    let b = lines[row1][col1];
-                    if a == 'S' {
-                        b == 'a'
-                    } else if b == 'E' {
-                        a == 'z'
-                    } else {
-                        b as i32 - a as i32 <= 1
-                    }
-                })
-                .collect()
-        },
-    )
-    .find(|((row, col), _)| lines[*row][*col] == 'E')
-    .map(|(_, depth)| depth)
-}
-
-pub fn part2<'a, I, S>(lines: I) -> Option<usize>
-where
-    I: IntoIterator<Item = &'a S>,
-    S: AsRef<str> + 'a,
-{
-    let lines = lines
-        .into_iter()
-        .map(|line| line.as_ref().chars().collect())
-        .collect::<Vec<Vec<_>>>();
-    Bfs::new(
-        lines.iter().enumerate().find_map(|(row, line)| {
+    let Some(start) = lines.iter().enumerate().find_map(|(row, line)| {
             line.iter()
                 .enumerate()
                 .find(|(_, c)| c == &&'E')
                 .map(|(col, _)| (row, col))
-        })?,
-        |&(row0, col0)| -> Vec<_> {
-            let a = lines[row0][col0];
-            (row0.saturating_sub(1)..min(row0 + 2, lines.len()))
-                .flat_map(|row1| {
-                    let line = &lines[row1];
-                    if row0 == row1 {
-                        col0.checked_sub(1)
-                    } else {
-                        None
-                    }
-                    .into_iter()
-                    .chain(iter::once(if row0 == row1 { col0 + 1 } else { col0 }))
-                    .filter(|col1| col1 < &line.len())
-                    .map(move |col1| (row1, col1))
-                })
-                .filter(|&(row1, col1)| {
-                    let b = lines[row1][col1];
-                    if a == 'E' {
-                        b == 'z'
-                    } else {
-                        a as i32 - b as i32 <= 1
-                    }
-                })
-                .collect()
-        },
-    )
-    .find(|((row, col), _)| lines[*row][*col] == 'a')
-    .map(|(_, depth)| depth)
+        }) else {
+        return (None, None);
+    };
+    let (mut part1, mut part2) = (None, None);
+    for ((row, col), depth) in Bfs::new(start, |&(row0, col0)| -> Vec<_> {
+        let a = match lines[row0][col0] {
+            'S' => 'a',
+            'E' => 'z',
+            a => a,
+        };
+        (row0.saturating_sub(1)..min(row0 + 2, lines.len()))
+            .flat_map(|row1| {
+                let line = &lines[row1];
+                if row0 == row1 {
+                    col0.checked_sub(1)
+                } else {
+                    None
+                }
+                .into_iter()
+                .chain(iter::once(if row0 == row1 { col0 + 1 } else { col0 }))
+                .filter(|col1| col1 < &line.len())
+                .map(move |col1| (row1, col1))
+            })
+            .filter(|&(row1, col1)| {
+                let b = match lines[row1][col1] {
+                    'S' => 'a',
+                    'E' => 'z',
+                    a => a,
+                };
+                a as i32 - b as i32 <= 1
+            })
+            .collect::<Vec<_>>()
+    }) {
+        match lines[row][col] {
+            'S' => part1 = Some(part1.unwrap_or(depth)),
+            'a' => part2 = Some(part2.unwrap_or(depth)),
+            _ => continue,
+        }
+        if part1.is_some() && part2.is_some() {
+            break;
+        }
+    }
+    (part1, part2)
 }
 
 #[cfg(test)]
@@ -139,11 +104,11 @@ mod tests {
 
     #[test]
     fn part1_examples() {
-        assert_eq!(Some(31), part1(EXAMPLE));
+        assert_eq!(Some(31), both_parts(EXAMPLE).0);
     }
 
     #[test]
     fn part2_examples() {
-        assert_eq!(Some(29), part2(EXAMPLE));
+        assert_eq!(Some(29), both_parts(EXAMPLE).1);
     }
 }

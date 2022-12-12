@@ -52,8 +52,9 @@ fn aoc2022_bench(c: &mut Criterion) {
     g.bench_function("part 2", |b| b.iter(|| day11::part2(black_box(DAY11))));
     g.finish();
     let mut g = c.benchmark_group("day 12");
-    g.bench_function("part 1", |b| b.iter(|| day12::part1(black_box(DAY12))));
-    g.bench_function("part 2", |b| b.iter(|| day12::part2(black_box(DAY12))));
+    g.bench_function("both parts", |b| {
+        b.iter(|| day12::both_parts(black_box(DAY12)))
+    });
     g.finish();
 }
 

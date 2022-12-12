@@ -93,8 +93,9 @@ fn main() -> io::Result<()> {
 
     if args.is_empty() || args.contains(&12) {
         println!("Day 12");
-        println!("{:?}", day12::part1(DAY12).expect("error"));
-        println!("{:?}", day12::part2(DAY12).expect("error"));
+        let (part1, part2) = day12::both_parts(DAY12);
+        println!("{:?}", part1.expect("error"));
+        println!("{:?}", part2.expect("error"));
         println!();
     }
 
