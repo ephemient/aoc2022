@@ -14,6 +14,16 @@ class Day13Test {
         assertEquals(140, Day13(SAMPLE_INPUT).part2())
     }
 
+    @Test
+    fun part1Fast() {
+        assertEquals(13, Day13Fast(SAMPLE_INPUT).part1())
+    }
+
+    @Test
+    fun part2Fast() {
+        assertEquals(140, Day13Fast(SAMPLE_INPUT).part2())
+    }
+
     companion object {
         private val SAMPLE_INPUT = listOf(
             "[1,1,3,1,1]",
