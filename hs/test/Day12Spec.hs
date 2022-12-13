@@ -20,5 +20,6 @@ spec = do
     describe "part 1" $ do
         it "examples" $ do
             fst (day12 example) `shouldBe` Just 31
+    describe "part 2" $ do
         it "examples" $ do
             snd (day12 example) `shouldBe` Just 29

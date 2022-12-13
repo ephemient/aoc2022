@@ -15,9 +15,9 @@ example = T.unlines
 
 spec :: Spec
 spec = do
-    describe "part 2" $ do
+    describe "part 1" $ do
         it "examples" $ do
             day2a example `shouldBe` 15
-    describe "part 3" $ do
+    describe "part 2" $ do
         it "examples" $ do
             day2b example `shouldBe` 12
