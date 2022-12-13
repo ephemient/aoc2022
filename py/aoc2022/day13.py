@@ -2,6 +2,7 @@
 Day 13: Distress Signal
 """
 
+import ast
 from collections.abc import Iterable
 from itertools import zip_longest
 
@@ -34,9 +35,8 @@ SAMPLE_INPUT = [
 
 def _parse(line):
     if any(char not in "\n,0123456789[]" for char in line):
-        raise AssertionError()
-    # pylint: disable=eval-used
-    return eval(line, {"__builtins__": {}}, {})
+        raise ValueError()
+    return ast.literal_eval(line)
 
 
 def _compare(lhs, rhs):
