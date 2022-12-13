@@ -14,8 +14,9 @@ import Day10 (day10a, day10b)
 import Day11 (day11a, day11b)
 import Day12 (day12)
 import Day13 (day13a, day13b)
+import Day13Fast (day13aFast, day13bFast)
 
-import Control.Monad ((<=<), when)
+import Control.Monad ((<=<), ap, when)
 import Data.Maybe (mapMaybe)
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO (putStrLn, readFile)
@@ -28,10 +29,13 @@ getDayInput :: Int -> IO Text
 getDayInput i = getDataFileName ("day" ++ show i ++ ".txt") >>= TIO.readFile
 
 run :: Int -> (a -> IO ()) -> [Text -> a] -> IO ()
-run day showIO funcs = do
-    days <- mapMaybe readMaybe <$> getArgs
-    when (null days || day `elem` days) $ do
-    putStrLn $ "Day " ++ show day
+run = run' `ap` show
+
+run' :: Int -> String -> (a -> IO ()) -> [Text -> a] -> IO ()
+run' day name showIO funcs = do
+    args <- getArgs
+    when (null args || name `elem` args) $ do
+    putStrLn $ "Day " ++ name
     contents <- getDayInput day
     mapM_ (showIO . ($ contents)) funcs
     putStrLn ""
@@ -52,3 +56,4 @@ main = do
     run 12 `flip` [day12] $ \(part1, part2) ->
         maybe (fail "(⊥)") print part1 >> maybe (fail "(⊥)") print part2
     run 13 (either (fail . errorBundlePretty) print) [day13a, day13b]
+    run' 13 "13Fast" print [day13aFast, day13bFast]

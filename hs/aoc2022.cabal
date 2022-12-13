@@ -43,6 +43,7 @@ library
       , Day11
       , Day12
       , Day13
+      , Day13Fast
     build-depends:
         base ^>=4.16.0.0
       , containers ^>=0.6.5.1
