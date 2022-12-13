@@ -75,7 +75,7 @@ def _parse(lines):
                 if_true = int(next(lines).split()[-1])
                 if_false = int(next(lines).split()[-1])
                 yield _Monkey(items, operation, test, if_true, if_false)
-    except StopIteration as _:
+    except StopIteration:
         pass
 
 

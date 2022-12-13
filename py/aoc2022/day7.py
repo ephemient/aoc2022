@@ -44,7 +44,7 @@ def _parse(lines):
             case (size, *_):
                 try:
                     size = int(size)
-                except ValueError as _:
+                except ValueError:
                     continue
                 path = cwd
                 while True:
