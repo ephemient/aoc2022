@@ -13,6 +13,7 @@ import Day9 (day9a, day9b)
 import Day10 (day10a, day10b)
 import Day11 (day11a, day11b)
 import Day12 (day12)
+import Day13 (day13a, day13b)
 
 import Control.Monad ((<=<), when)
 import Data.Maybe (mapMaybe)
@@ -50,3 +51,4 @@ main = do
     run 11 (either (fail . errorBundlePretty) print) [day11a, day11b]
     run 12 `flip` [day12] $ \(part1, part2) ->
         maybe (fail "(⊥)") print part1 >> maybe (fail "(⊥)") print part2
+    run 13 (either (fail . errorBundlePretty) print) [day13a, day13b]
