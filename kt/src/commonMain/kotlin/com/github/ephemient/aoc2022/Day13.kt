@@ -5,15 +5,17 @@ class Day13(lines: List<String>) {
     private val packets = lines.mapNotNull { if (it.isNotEmpty()) it.toPacket() else null }
 
     @Day.Part
-    fun part1(): Int = packets.chunked(2) { (a, b) -> a <= b }.withIndex().filter { it.value }.sumOf { it.index + 1}
+    fun part1(): Int = packets.chunked(2) { (a, b) -> a <= b }.withIndex().filter { it.value }.sumOf { it.index + 1 }
 
     @Day.Part
     fun part2(): Int {
         var x = 1
         var y = 1
         for (packet in packets) {
-            if (packet < a) x++
-            else if (packet < b) y++
+            when {
+                packet < a -> x++
+                packet < b -> y++
+            }
         }
         return x * (x + y)
     }
