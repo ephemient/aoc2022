@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::iter;
 use std::str::FromStr;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Eq, PartialEq)]
 enum Packet<T> {
     Literal(T),
     List(Vec<Packet<T>>),
@@ -147,6 +147,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::day13_fast;
     use pretty_assertions::assert_eq;
 
     static EXAMPLE: &[&str] = &[
@@ -181,7 +182,17 @@ mod tests {
     }
 
     #[test]
+    fn part1_examples_fast() {
+        assert_eq!(13, day13_fast::part1(EXAMPLE));
+    }
+
+    #[test]
     fn part2_examples() {
         assert_eq!(140, part2(EXAMPLE));
+    }
+
+    #[test]
+    fn part2_examples_fast() {
+        assert_eq!(140, day13_fast::part2(EXAMPLE));
     }
 }
