@@ -23,48 +23,33 @@ def _parse(lines):
     return blocks
 
 
-def _fall(blocks, max_y):
-    x = 500
-    for y in range(0, max_y):
-        if (x, y + 1) not in blocks:
-            pass
-        elif (x - 1, y + 1) not in blocks:
-            x -= 1
-        elif (x + 1, y + 1) not in blocks:
-            x += 1
-        else:
-            return x, y
-    return x, max_y
+def _fill(blocks, max_y):
+    def _fill_helper(x, y):
+        if (x, y) in blocks:
+            return
+        if y <= max_y:
+            yield from _fill_helper(x, y + 1)
+            yield from _fill_helper(x - 1, y + 1)
+            yield from _fill_helper(x + 1, y + 1)
+        blocks.add((x, y))
+        yield x, y
+
+    yield from _fill_helper(500, 0)
 
 
-def part1(lines):
+def both_parts(lines):
     """
-    >>> part1(SAMPLE_INPUT)
-    24
+    >>> both_parts(SAMPLE_INPUT)
+    (24, 93)
     """
     blocks = _parse(lines)
-    max_y, count = max(y for _, y in blocks), 0
-    while True:
-        x, y = _fall(blocks, max_y)
-        if y >= max_y:
-            return count
-        blocks.add((x, y))
-        count += 1
+    max_y = max(y for _, y in blocks)
+    part1, part2 = None, 0
+    for _, y in _fill(blocks, max_y):
+        if y >= max_y and part1 is None:
+            part1 = part2
+        part2 += 1
+    return part1, part2
 
 
-def part2(lines):
-    """
-    >>> part2(SAMPLE_INPUT)
-    93
-    """
-    blocks = _parse(lines)
-    max_y, count = max(y for _, y in blocks) + 1, 0
-    while True:
-        x, y = _fall(blocks, max_y)
-        blocks.add((x, y))
-        count += 1
-        if x == 500 and y == 0:
-            return count
-
-
-parts = (part1, part2)
+parts = (both_parts,)
