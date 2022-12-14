@@ -15,6 +15,7 @@ import Day11 (day11a, day11b)
 import Day12 (day12)
 import Day13 (day13a, day13b)
 import Day13Fast (day13aFast, day13bFast)
+import Day14 (day14a, day14b)
 
 import Control.Monad ((<=<), ap, when)
 import Data.Maybe (mapMaybe)
@@ -57,3 +58,4 @@ main = do
         maybe (fail "(⊥)") print part1 >> maybe (fail "(⊥)") print part2
     run 13 (either (fail . errorBundlePretty) print) [day13a, day13b]
     run' 13 "13Fast" print [day13aFast, day13bFast]
+    run 14 print [day14a, day14b]
