@@ -36,8 +36,9 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
             .filterIsInstance<KSClassDeclaration>()
             .sortedWith(
                 compareBy(
-                    compareBy<String, Int?>(nullsLast(naturalOrder())) { it.removePrefix("Day").toIntOrNull() }
-                        .thenBy { it }
+                    compareBy<String, Int?>(nullsLast(naturalOrder())) {
+                        it.removePrefix("Day").takeWhile { it.isDigit() }.toIntOrNull()
+                    }.thenBy { it }
                 ) { it.simpleName.asString() }
             )
             .toSet()
