@@ -36,3 +36,24 @@ where
 pub fn iter_chunks<const N: usize, I>(iter: I) -> IterChunks<N, I> {
     IterChunks { iter }
 }
+
+pub struct IterPairs<I: Iterator> {
+    prev: Option<<I as Iterator>::Item>,
+    iter: I,
+}
+impl<I> Iterator for IterPairs<I>
+where
+    I: Iterator,
+    <I as Iterator>::Item: Clone,
+{
+    type Item = (<I as Iterator>::Item, <I as Iterator>::Item);
+    fn next(&mut self) -> Option<Self::Item> {
+        let prev = self.prev.take().or_else(|| self.iter.next())?;
+        let next = self.iter.next()?;
+        self.prev = Some(next.clone());
+        Some((prev, next))
+    }
+}
+pub fn iter_pairs<I: Iterator>(iter: I) -> IterPairs<I> {
+    IterPairs { prev: None, iter }
+}
