@@ -29,17 +29,17 @@ class Day14(lines: List<String>) {
         }
         var count = 0
         var countAtMaxY = -1
-        DeepRecursiveFunction<IntPair, Boolean> { (x, y) ->
+        DeepRecursiveFunction<IntPair, Unit> { (x, y) ->
             check(x in 0 until width)
-            if (blocks[x + y * width]) return@DeepRecursiveFunction true
+            if (blocks[x + y * width]) return@DeepRecursiveFunction
             if (y == maxY && countAtMaxY < 0) countAtMaxY = count
-            val shouldFill = y > maxY ||
-                callRecursive(x to y + 1) && callRecursive(x - 1 to y + 1) && callRecursive(x + 1 to y + 1)
-            if (shouldFill) {
-                blocks[x + y * width] = true
-                count++
+            if (y <= maxY) {
+                callRecursive(x to y + 1)
+                callRecursive(x - 1 to y + 1)
+                callRecursive(x + 1 to y + 1)
             }
-            shouldFill
+            blocks[x + y * width] = true
+            count++
         }(500 to 0)
         check(countAtMaxY >= 0)
         countAtMaxY to count
