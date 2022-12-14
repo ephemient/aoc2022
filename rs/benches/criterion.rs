@@ -70,8 +70,7 @@ fn aoc2022_bench(c: &mut Criterion) {
     });
     g.finish();
     let mut g = c.benchmark_group("day 14");
-    g.bench_function("part 1", |b| b.iter(|| day14::part1(black_box(DAY14))));
-    g.bench_function("part 2", |b| b.iter(|| day14::part2(black_box(DAY14))));
+    g.bench_function("both", |b| b.iter(|| day14::both_parts(black_box(DAY14))));
     g.finish();
 }
 

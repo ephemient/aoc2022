@@ -58,48 +58,68 @@ where
     Some((bitmap, max_y))
 }
 
-fn fall(blocks: &mut Bitmap, max_y: usize) -> Result<(usize, usize), usize> {
-    let mut x = 500;
-    for y in 0..max_y {
-        if !blocks.contains(x, y + 1) {
-        } else if !blocks.contains(x - 1, y + 1) {
-            x -= 1
-        } else if !blocks.contains(x + 1, y + 1) {
-            x += 1
-        } else {
-            return Ok((x, y));
+enum FillState {
+    Pre(usize, usize),
+    Post(usize, usize),
+}
+struct FillIterator {
+    blocks: Bitmap,
+    max_y: usize,
+    stack: Vec<FillState>,
+}
+impl FillIterator {
+    fn new(blocks: Bitmap, max_y: usize) -> Self {
+        FillIterator {
+            blocks,
+            max_y,
+            stack: vec![FillState::Pre(500, 0)],
         }
     }
-    Err(x)
+}
+impl Iterator for FillIterator {
+    type Item = (usize, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let state = self.stack.pop()?;
+            match state {
+                FillState::Pre(x, y) => {
+                    if self.blocks.contains(x, y) {
+                        continue;
+                    }
+                    self.stack.push(FillState::Post(x, y));
+                    if y <= self.max_y {
+                        self.stack.extend([
+                            FillState::Pre(x + 1, y + 1),
+                            FillState::Pre(x - 1, y + 1),
+                            FillState::Pre(x, y + 1),
+                        ]);
+                    }
+                }
+                FillState::Post(x, y) => {
+                    self.blocks.add(x, y);
+                    return Some((x, y));
+                }
+            }
+        }
+    }
 }
 
-pub fn part1<'a, I, S>(lines: I) -> usize
+pub fn both_parts<'a, I, S>(lines: I) -> (usize, usize)
 where
     I: IntoIterator<Item = &'a S>,
     S: AsRef<str> + 'a,
 {
-    let Some((mut blocks, max_y)) = parse(lines) else { return 0 };
-    let mut count = 0;
-    while let Ok((x, y)) = fall(&mut blocks, max_y) {
-        blocks.add(x, y);
-        count += 1;
-    }
-    count
-}
-
-pub fn part2<'a, I, S>(lines: I) -> usize
-where
-    I: IntoIterator<Item = &'a S>,
-    S: AsRef<str> + 'a,
-{
-    let Some((mut blocks, max_y)) = parse(lines) else { return 0 };
-    let mut count = 0;
-    while !blocks.contains(500, 0) {
-        let (x, y) = fall(&mut blocks, max_y + 1).unwrap_or_else(|x| (x, max_y + 1));
-        blocks.add(x, y);
-        count += 1;
-    }
-    count
+    let Some((blocks, max_y)) = parse(lines) else { return (0, 0) };
+    FillIterator::new(blocks, max_y)
+        .enumerate()
+        .scan(None, |part1, (i, (_, y))| {
+            if y >= max_y && part1.is_none() {
+                *part1 = Some(i);
+            }
+            Some((part1.unwrap_or(i + 1), i + 1))
+        })
+        .last()
+        .unwrap_or((0, 0))
 }
 
 #[cfg(test)]
@@ -114,11 +134,11 @@ mod tests {
 
     #[test]
     fn part1_examples() {
-        assert_eq!(24, part1(EXAMPLE));
+        assert_eq!(24, both_parts(EXAMPLE).0);
     }
 
     #[test]
     fn part2_examples() {
-        assert_eq!(93, part2(EXAMPLE));
+        assert_eq!(93, both_parts(EXAMPLE).1);
     }
 }

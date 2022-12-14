@@ -115,8 +115,9 @@ fn main() -> io::Result<()> {
 
     if args.is_empty() || args.contains("14") {
         println!("Day 14");
-        println!("{:?}", day14::part1(DAY14));
-        println!("{:?}", day14::part2(DAY14));
+        let (part1, part2) = day14::both_parts(DAY14);
+        println!("{:?}", part1);
+        println!("{:?}", part2);
         println!();
     }
 
