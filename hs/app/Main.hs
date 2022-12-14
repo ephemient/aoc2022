@@ -15,9 +15,10 @@ import Day11 (day11a, day11b)
 import Day12 (day12)
 import Day13 (day13a, day13b)
 import Day13Fast (day13aFast, day13bFast)
-import Day14 (day14a, day14b)
+import Day14 (day14)
 
 import Control.Monad ((<=<), ap, when)
+import Data.Function (on)
 import Data.Maybe (mapMaybe)
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO (putStrLn, readFile)
@@ -54,8 +55,7 @@ main = do
     run 9 print [day9a, day9b]
     run 10 putStrLn [show . day10a, day10b]
     run 11 (either (fail . errorBundlePretty) print) [day11a, day11b]
-    run 12 `flip` [day12] $ \(part1, part2) ->
-        maybe (fail "(⊥)") print part1 >> maybe (fail "(⊥)") print part2
+    run 12 (uncurry ((>>) `on` maybe (fail "(⊥)") print)) [day12]
     run 13 (either (fail . errorBundlePretty) print) [day13a, day13b]
     run' 13 "13Fast" print [day13aFast, day13bFast]
-    run 14 print [day14a, day14b]
+    run 14 (uncurry ((>>) `on` print)) [day14]

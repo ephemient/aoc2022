@@ -17,7 +17,7 @@ import Day11 (day11a, day11b)
 import Day12 (day12)
 import Day13 (day13a, day13b)
 import Day13Fast (day13aFast, day13bFast)
-import Day14 (day14a, day14b)
+import Day14 (day14)
 import Paths_aoc2022 (getDataFileName)
 
 getDayInput :: Int -> IO Text
@@ -79,7 +79,6 @@ main = defaultMain
       , bench "part 2 (fast)" $ nf day13bFast input
       ]
   , env (getDayInput 14) $ \input -> bgroup "Day 14"
-      [ bench "part 1" $ nf day14a input
-      , bench "part 2" $ nf day14b input
+      [ bench "both" $ nf day14 input
       ]
   ]
