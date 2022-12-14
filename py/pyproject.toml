@@ -45,6 +45,7 @@ day11 = "aoc2022.day11:parts"
 day12 = "aoc2022.day12:parts"
 day13 = "aoc2022.day13:parts"
 day13Fast = "aoc2022.day13_fast:parts"
+day14 = "aoc2022.day14:parts"
 
 [tool.black]
 target_version = ["py311"]
@@ -54,6 +55,9 @@ profile = "black"
 
 [tool.pylint.format]
 max-line-length = "88"
+
+[tool.pylint.basic]
+good-names-rgxs = ["[xyz]\\d*"]
 
 [tool.pytest.ini_options]
 addopts = '--doctest-modules --benchmark-disable --benchmark-sort=fullname'
