@@ -64,11 +64,11 @@ day15b size input = the
   | y <- [0..size]
   , let intervals = foldl' intervalAdd Set.empty
           [ (lo, hi)
-          | ((x0, y0), (x1, y1)) <- parseLine <$> T.lines input
+          | ((x0, y0), (x1, y1)) <- inputs
           , let dx = abs (x0 - x1) + abs (y0 - y1) - abs (y - y0)
           , let lo = max 0 $ x0 - dx
           , let hi = min size $ x0 + dx
           , lo <= hi
           ]
   , x <- intervalGaps 0 size intervals
-  ]
+  ] where inputs = parseLine <$> T.lines input
