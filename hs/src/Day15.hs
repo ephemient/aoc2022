@@ -2,14 +2,16 @@
 Module:         Day15
 Description:    <https://adventofcode.com/2022/day/15 Day 15: Beacon Exclusion Zone>
 -}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE MultiWayIf, OverloadedStrings #-}
 module Day15 (day15a, day15b) where
 
-import Data.IntMap (IntMap)
-import qualified Data.IntMap as IntMap (empty, foldlWithKey', maxViewWithKey, minViewWithKey, singleton, splitLookup, unions)
+import Control.Monad ((>=>), foldM)
+import Control.Monad.Writer (execWriter, tell)
 import qualified Data.IntSet as IntSet (fromList, size)
 import Data.Ix (rangeSize)
 import Data.List (foldl')
+import Data.Set (Set)
+import qualified Data.Set as Set (empty, lookupMax, lookupMin, singleton, spanAntitone, unions)
 import Data.Text (Text)
 import qualified Data.Text as T (lines, stripPrefix)
 import qualified Data.Text.Read as T (decimal, signed)
@@ -27,46 +29,40 @@ parseLine line
   , Right (y1, "") <- T.signed T.decimal line
   = ((x0, y0), (x1, y1))
 
-intervalAdd :: IntMap Int -> (Int, Int) -> IntMap Int
-intervalAdd intervals (lo, hi) = IntMap.unions [los', IntMap.singleton lo' hi'', his'] where
-    (los, mid, his) = IntMap.splitLookup lo intervals
-    (los', lo', hi') = mergeDown los lo $ maybe hi (max hi) mid
-    (his', hi'') = mergeUp his hi'
-    mergeDown m x y
-      | Just ((z, t), m') <- IntMap.maxViewWithKey m, x <= t + 1
-      = mergeDown m' (min x z) (max y t)
-      | otherwise = (m, x, y)
-    mergeUp m x
-      | Just ((y, z), m') <- IntMap.minViewWithKey m, x + 1 >= y
-      = mergeUp m' $ max x z
-      | otherwise = (m, x)
+intervalAdd :: Set (Int, Int) -> (Int, Int) -> Set (Int, Int)
+intervalAdd intervals (lo, hi) = Set.unions [los, mid', his] where
+    (los, rest) = Set.spanAntitone (\(_, y) -> y < lo - 1) intervals
+    (mid, his) = Set.spanAntitone (\(x, _) -> x <= hi + 1) rest
+    mid' = Set.singleton $ if
+      | Just (lo', _) <- Set.lookupMin mid
+      , Just (_, hi') <- Set.lookupMax mid
+      -> (min lo lo', max hi hi')
+      | otherwise -> (lo, hi)
 
-intervalSize :: IntMap Int -> Int
-intervalSize = IntMap.foldlWithKey' (\s lo hi -> s + rangeSize (lo, hi)) 0
+intervalSize :: Set (Int, Int) -> Int
+intervalSize = foldl' (flip $ (+) . rangeSize) 0
 
-intervalGaps :: Int -> Int -> IntMap Int -> [Int]
-intervalGaps lo hi m
-  | lo > hi = []
-  | Just ((y, z), m') <- IntMap.minViewWithKey m
-  = if z < lo then intervalGaps lo hi m' else [lo..y - 1] ++ intervalGaps (z + 1) hi m'
-  | otherwise = [lo..hi]
+intervalGaps :: Int -> Int -> Set (Int, Int) -> [Int]
+intervalGaps lo hi = execWriter . (foldM f lo >=> g) where
+    f x (y, z) = z + 1 <$ tell [x..y - 1]
+    g x = tell [x..hi]
 
 day15a :: Int -> Text -> Int
-day15a y input = intervalSize intervals - beacons where
+day15a y input = intervalSize intervals - IntSet.size beacons where
     inputs = parseLine <$> T.lines input
-    intervals = foldl' intervalAdd IntMap.empty
+    intervals = foldl' intervalAdd Set.empty
       [ (x0 - dx, x0 + dx)
       | ((x0, y0), (x1, y1)) <- inputs
       , let dx = abs (x0 - x1) + abs (y0 - y1) - abs (y - y0)
       , dx >= 0
       ]
-    beacons = IntSet.size . IntSet.fromList . map fst . filter ((== y) . snd) $ snd <$> inputs
+    beacons = IntSet.fromList . map fst . filter ((== y) . snd) $ snd <$> inputs
 
 day15b :: Int -> Text -> Int
 day15b size input = the
   [ 4000000 * x + y
   | y <- [0..size]
-  , let intervals = foldl' intervalAdd IntMap.empty
+  , let intervals = foldl' intervalAdd Set.empty
           [ (lo, hi)
           | ((x0, y0), (x1, y1)) <- parseLine <$> T.lines input
           , let dx = abs (x0 - x1) + abs (y0 - y1) - abs (y - y0)
