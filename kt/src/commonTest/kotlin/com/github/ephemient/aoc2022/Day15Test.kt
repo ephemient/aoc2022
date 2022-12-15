@@ -12,6 +12,7 @@ class Day15Test {
     @Test
     fun part2() {
         assertEquals(56000011, Day15(SAMPLE_INPUT).part2(20))
+        assertEquals(56000011, Day15(SAMPLE_INPUT).part2a(20))
     }
 
     companion object {
