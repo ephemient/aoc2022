@@ -43,7 +43,7 @@ class Day15(lines: List<String>) {
     }.single()
 }
 
-internal fun MutableList<IntRange>.addInterval(range: IntRange) {
+private fun MutableList<IntRange>.addInterval(range: IntRange) {
     val loIndex = binarySearch { it.last.compareTo(range.first - 1) }.let { it shr 31 xor it }
     val hiIndex = binarySearch(fromIndex = loIndex) { it.first.compareTo(range.last + 1) }.let { it shr 31 xor it }
     val mergedRange = if (loIndex < hiIndex) {
