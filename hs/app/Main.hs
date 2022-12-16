@@ -17,6 +17,7 @@ import Day13 (day13a, day13b)
 import Day13Fast (day13aFast, day13bFast)
 import Day14 (day14)
 import Day15 (day15a, day15b)
+import Day16 (day16a)
 
 import Control.Monad ((<=<), ap, when)
 import Data.Function (on)
@@ -61,3 +62,4 @@ main = do
     run' 13 "13Fast" print [day13aFast, day13bFast]
     run 14 (uncurry ((>>) `on` print)) [day14]
     run 15 print [day15a 2000000, day15b 4000000]
+    run 16 (either (fail . errorBundlePretty) print) [day16a]

@@ -1,6 +1,7 @@
 module Main (main) where
 
-import Criterion.Main (bench, bgroup, defaultMain, env, nf)
+import Control.Arrow ((>>>))
+import Criterion.Main (bench, bgroup, defaultMain, env, envWithCleanup, nf)
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO (readFile)
 import Day1 (day1a, day1b)
@@ -19,7 +20,15 @@ import Day13 (day13a, day13b)
 import Day13Fast (day13aFast, day13bFast)
 import Day14 (day14)
 import Day15 (day15a, day15b)
+import Day16 (day16a)
 import Paths_aoc2022 (getDataFileName)
+import System.Environment.Blank (getEnv, setEnv, unsetEnv)
+
+setTrace :: String -> IO (Maybe String)
+setTrace value = getEnv "TRACE" <* setEnv "TRACE" value True
+
+unsetTrace :: Maybe String -> IO ()
+unsetTrace = maybe (unsetEnv "TRACE") (setEnv "TRACE" `flip` True)
 
 getDayInput :: Int -> IO Text
 getDayInput i = getDataFileName ("day" ++ show i ++ ".txt") >>= TIO.readFile
@@ -86,4 +95,8 @@ main = defaultMain
       [ bench "part 1" $ nf (day15a 2000000) input
       , bench "part 2" $ nf (day15b 4000000) input
       ]
+  , envWithCleanup ((,) <$> getDayInput 16 <*> setTrace "0")
+        (unsetTrace . snd) $ fst >>> \input -> bgroup "Day 16"
+          [ bench "part 1" $ nf day16a input
+          ]
   ]

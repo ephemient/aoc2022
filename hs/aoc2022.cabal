@@ -26,6 +26,7 @@ data-files:
   , day13.txt
   , day14.txt
   , day15.txt
+  , day16.txt
 
 extra-source-files:
     README.md
@@ -48,10 +49,12 @@ library
       , Day13Fast
       , Day14
       , Day15
+      , Day16
     build-depends:
         array ^>=0.5.4.0
       , base ^>=4.16.0.0
       , containers ^>=0.6.5.1
+      , heap ^>=1.0.4
       , megaparsec ^>=9.3.0
       , mtl ^>=2.2.2
       , primitive ^>=0.7.4.0
@@ -103,6 +106,7 @@ test-suite aoc2022-test
       , Day13Spec
       , Day14Spec
       , Day15Spec
+      , Day16Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:
