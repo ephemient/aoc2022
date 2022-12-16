@@ -5,16 +5,18 @@ Description:    <https://adventofcode.com/2022/day/16 Day 16: Proboscidea Volcan
 {-# LANGUAGE OverloadedStrings, TypeFamilies, ViewPatterns #-}
 module Day16 (day16a) where
 
+import Control.Monad (join)
 import Data.Char (isAlphaNum)
 import qualified Data.Heap as Heap (FstMaxPolicy, insert, singleton, view)
 import Data.List (foldl')
-import qualified Data.Map as Map ((!), elems, fromList)
-import Data.Maybe (fromMaybe)
-import qualified Data.Set as Set (empty, insert, member, notMember)
+import Data.Map (Map)
+import qualified Data.Map as Map ((!), (!?), assocs, delete, filter, fromList, fromSet, insertWith, keys, union)
+import Data.Maybe (fromMaybe, maybeToList)
+import Data.Monoid (Sum(Sum, getSum))
+import qualified Data.Set as Set (empty, foldl', fromList, insert, mapMonotonic, member, notMember)
 import Data.String (IsString)
 import Data.Text (Text)
 import Data.Void (Void)
-import Debug.Trace (traceShow)
 import Text.Megaparsec (MonadParsec, ParseErrorBundle, Token, Tokens, (<|>), parse, sepEndBy, sepEndBy1, takeWhile1P)
 import Text.Megaparsec.Char (eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L (decimal)
@@ -42,22 +44,42 @@ search next = search' Set.empty Nothing . Heap.singleton @Heap.FstMaxPolicy wher
             heap' = foldl' (flip Heap.insert) heap $ filter (flip Set.notMember seen' . snd) nexts
     search' _ _ _ = []
 
+shortestPaths :: (Ord a, Monoid b, Ord b) => Map (a, a) b -> Map (a, a) b
+shortestPaths es =
+    Set.foldl' (\d a -> Set.foldl' (\d b -> Set.foldl' (flip $ update a b) d vs) d vs) d0 vs
+  where
+    vs = Set.fromList $ concat [[a, b] | (a, b) <- Map.keys es]
+    d0 = Map.union es $ Map.fromSet (const mempty) $ Set.mapMonotonic (join (,)) vs
+    update c b a d
+      | Just x <- d Map.!? (a, c)
+      , Just y <- d Map.!? (c, b)
+      = Map.insertWith min (a, b) (x <> y) d
+      | otherwise = d
+
 day16a :: Text -> Either (ParseErrorBundle Text Void) Int
 day16a input = do
     gr <- Map.fromList <$> parse parser "day16.txt" input
-    let maxFlow = sum $ fst <$> Map.elems gr
+    let distances = fmap getSum . shortestPaths $ Map.fromList
+            [((a, b), Sum 1) | (a, (_, bs)) <- Map.assocs gr, b <- bs]
         next (_, _, _, _, 0) = (Nothing, [])
-        next (room, open, flow, total, time)
-          | flow == maxFlow = (Just ideal, [(ideal, (room, open, flow, ideal, 0))])
-          | otherwise = (Just ideal, ) $
-              [ (estimate + rate * (time - 1), (room, Set.insert room open, flow + rate, total + flow, time - 1))
-              | rate > 0 && Set.notMember room open
-              ] ++ [(estimate, (room', open, flow, total + flow, time - 1)) | room' <- rooms]
+        next (room, valves, flow, total, time)
+          | null options = (Just estimate, [(estimate, (room, valves, flow, estimate, 0))])
+          | otherwise = (Just potential, options)
           where
             estimate = total + flow * time
-            ideal = total + maxFlow * time
-            (rate, rooms) = gr Map.! room
-        max' total (room, open, flow, total', time)
-          | total' > total = traceShow (room, open, total', time) total'
-          | otherwise = total
-    pure $ foldl' max' 0 $ search next (0, ("AA", Set.empty, 0, 0, 30))
+            potential = estimate + sum
+              [ rate * (time - d - 1)
+              | (room', rate) <- Map.assocs valves
+              , d <- maybeToList $ distances Map.!? (room, room')
+              , d < time
+              ]
+            options =
+              [ ( estimate + rate * (time - d - 1)
+                , (room', Map.delete room' valves, flow + rate, total + flow * (d + 1), time - d - 1)
+                )
+              | (room', rate) <- Map.assocs valves
+              , d <- maybeToList $ distances Map.!? (room, room')
+              , d < time
+              ]
+    pure $ maximum
+        [total | (_, _, _, total, _) <- search next (0, ("AA", Map.filter (> 0) $ fst <$> gr, 0, 0, 30))]

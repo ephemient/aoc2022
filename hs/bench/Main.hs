@@ -95,8 +95,7 @@ main = defaultMain
       [ bench "part 1" $ nf (day15a 2000000) input
       , bench "part 2" $ nf (day15b 4000000) input
       ]
-  , envWithCleanup ((,) <$> getDayInput 16 <*> setTrace "0")
-        (unsetTrace . snd) $ fst >>> \input -> bgroup "Day 16"
-          [ bench "part 1" $ nf day16a input
-          ]
+  , env (getDayInput 16) $ \input -> bgroup "Day 16"
+      [ bench "part 1" $ nf day16a input
+      ]
   ]
