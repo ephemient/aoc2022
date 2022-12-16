@@ -8,7 +8,8 @@ module Day16 (day16a) where
 import Data.Char (isAlphaNum)
 import qualified Data.Heap as Heap (FstMaxPolicy, insert, singleton, view)
 import Data.List (foldl')
-import qualified Data.Map as Map ((!), fromList)
+import qualified Data.Map as Map ((!), elems, fromList)
+import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set (empty, insert, member, notMember)
 import Data.String (IsString)
 import Data.Text (Text)
@@ -30,31 +31,32 @@ parser = parseLine `sepEndBy` eol where
         pure (src, (w, dsts))
     name = takeWhile1P Nothing isAlphaNum
 
-search :: (Ord a, Ord b) => (a -> [(b, a)]) -> (b, a) -> [a]
-search next = search' Set.empty . Heap.singleton @Heap.FstMaxPolicy where
-    search' seen (Heap.view -> Just ((b, a), heap))
-      | Set.member a seen = search' seen heap
-      | otherwise = a : search' seen' heap' where
+search :: (Ord a, Ord b) => (a -> (Maybe b, [(b, a)])) -> (b, a) -> [a]
+search next = search' Set.empty Nothing . Heap.singleton @Heap.FstMaxPolicy where
+    search' seen bestEstimate (Heap.view -> Just ((b, a), heap))
+      | Set.member a seen = search' seen bestEstimate heap
+      | fromMaybe False $ (<) <$> potential <*> bestEstimate = search' seen bestEstimate heap
+      | otherwise = a : search' seen' (Just $ maybe b (max b) bestEstimate) heap' where
+            (potential, nexts) = next a
             seen' = Set.insert a seen
-            heap' = foldl' (flip Heap.insert) heap $ filter (flip Set.notMember seen' . snd) $ next a
-    search' _ _ = []
+            heap' = foldl' (flip Heap.insert) heap $ filter (flip Set.notMember seen' . snd) nexts
+    search' _ _ _ = []
 
 day16a :: Text -> Either (ParseErrorBundle Text Void) Int
 day16a input = do
     gr <- Map.fromList <$> parse parser "day16.txt" input
-    let next (_, _, _, _, 0) = []
-        next (room, open, flow, total, time) =
-          [ ( total + flow + (flow + rate) * (time - 1)
-            , (room, Set.insert room open, flow + rate, total + flow, time - 1)
-            )
-          | rate > 0
-          , Set.notMember room open
-          ] ++
-          [ ( total + flow * time
-            , (room', open, flow, total + flow, time - 1)
-            )
-          | room' <- rooms
-          ] where (rate, rooms) = gr Map.! room
+    let maxFlow = sum $ fst <$> Map.elems gr
+        next (_, _, _, _, 0) = (Nothing, [])
+        next (room, open, flow, total, time)
+          | flow == maxFlow = (Just ideal, [(ideal, (room, open, flow, ideal, 0))])
+          | otherwise = (Just ideal, ) $
+              [ (estimate + rate * (time - 1), (room, Set.insert room open, flow + rate, total + flow, time - 1))
+              | rate > 0 && Set.notMember room open
+              ] ++ [(estimate, (room', open, flow, total + flow, time - 1)) | room' <- rooms]
+          where
+            estimate = total + flow * time
+            ideal = total + maxFlow * time
+            (rate, rooms) = gr Map.! room
         max' total (room, open, flow, total', time)
           | total' > total = traceShow (room, open, total', time) total'
           | otherwise = total
