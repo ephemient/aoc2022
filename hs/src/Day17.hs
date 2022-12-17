@@ -2,7 +2,6 @@
 Module:         Day17
 Description:    <https://adventofcode.com/2022/day/17 Day 17: Pyroclastic Flow>
 -}
-{-# LANGUAGE MultiWayIf #-}
 module Day17 (day17) where
 
 import Control.Arrow (second)
