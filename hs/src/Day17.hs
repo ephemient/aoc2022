@@ -48,11 +48,14 @@ findCycle xs = listToMaybe [(i, j) | (j, Just i) <- zip [0..] $ zipWith Map.look
     ixs = scanl' (flip $ uncurry Map.insert) Map.empty $ zip xs [0..]
 
 day17 :: Int -> Text -> Int
-day17 n input = height (snd $ states !! (i + r)) + q * (height2 - height1) where
+day17 n input
+  | Just (i, j) <- findCycle . zip (cycle [1..length rocks]) $ second normalize <$> take n states
+  = let height1 = height (snd $ states !! i)
+        height2 = height (snd $ states !! j)
+        (q, r) = (n - i) `divMod` (j - i)
+     in height (snd $ states !! (i + r)) + q * (height2 - height1)
+  | otherwise = height . snd $ states !! n
+  where
     [jet] = T.lines input
     states = scanl' (fall jet) (0, IntSet.fromDistinctAscList [0..6]) (cycle rocks)
     normalize set = IntSet.mapMonotonic (subtract $ 7 * height set) set
-    Just (i, j) = findCycle . zip (cycle [1..length rocks]) $ second normalize <$> states
-    height1 = height (snd $ states !! i)
-    height2 = height (snd $ states !! j)
-    (q, r) = (n - i) `divMod` (j - i)
