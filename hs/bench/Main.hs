@@ -21,6 +21,7 @@ import Day13Fast (day13aFast, day13bFast)
 import Day14 (day14)
 import Day15 (day15a, day15b)
 import Day16 (day16)
+import Day17 (day17)
 import Paths_aoc2022 (getDataFileName)
 import System.Environment.Blank (getEnv, setEnv, unsetEnv)
 
@@ -100,4 +101,8 @@ main = defaultMain
           [ bench "part 1" $ nf (day16 1 30) input
           , bench "part 2" $ nf (day16 2 26) input
           ]
+  , env (getDayInput 17) $ \input -> bgroup "Day 17"
+      [ bench "part 1" $ nf (day17 2022) input
+      , bench "part 2" $ nf (day17 1000000000000) input
+      ]
   ]
