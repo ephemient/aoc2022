@@ -48,6 +48,7 @@ day13Fast = "aoc2022.day13_fast:parts"
 day14 = "aoc2022.day14:parts"
 day15 = "aoc2022.day15:parts"
 day16 = "aoc2022.day16:parts"
+day17 = "aoc2022.day17:parts"
 
 [tool.black]
 target_version = ["py311"]
