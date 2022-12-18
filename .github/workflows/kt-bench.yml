@@ -171,4 +171,3 @@ jobs:
         with:
           add: jmh-visualizer
           message: 'kotlinx.benchmark ${{ github.sha }}'
-          pull: true

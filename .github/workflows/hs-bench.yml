@@ -45,4 +45,3 @@ jobs:
           cwd: gh-docs
           add: aoc2022-bench.html
           message: 'Haskell Criterion ${{ github.sha }}'
-          pull: true

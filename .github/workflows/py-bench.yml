@@ -36,4 +36,3 @@ jobs:
           cwd: gh-docs
           add: benchmark.svg
           message: 'pytest-benchmark ${{ github.sha }}'
-          pull: true

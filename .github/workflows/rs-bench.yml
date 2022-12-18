@@ -72,4 +72,3 @@ jobs:
           cwd: gh-docs
           add: criterion
           message: 'Rust Criterion ${{ github.sha }}'
-          pull: true
