@@ -2,31 +2,23 @@
 Day 17: Pyroclastic Flow
 """
 
-ROCKS = [
-    ["####"],
-    [".#.", "###", ".#."],
-    ["###", "..#", "..#"],
-    ["#", "#", "#", "#"],
-    ["##", "##"],
-]
+ROCKS = (
+    (4, (15,)),
+    (3, (2, 7, 2)),
+    (3, (7, 4, 4)),
+    (1, (1, 1, 1, 1)),
+    (2, (3, 3)),
+)
 
 
 def _check_free(rock, lines, x, y):
-    for rock_y, row in enumerate(rock):
-        if y + rock_y >= len(lines):
-            return True
-        line = lines[y + rock_y]
-        for rock_x, char in enumerate(row):
-            if char == "#" and line[x + rock_x] == "#":
-                return False
-    return True
+    return all(not (line & row << x) for line, row in zip(lines[y:], rock))
 
 
-def _step(rock, jet, jet_index, height, lines):
-    # pylint: disable=too-many-branches,too-many-locals
-    max_x = 7 - max(len(row) for row in rock)
+def _step(width, rock, jet, jet_index, height, lines):
+    # pylint: disable=too-many-arguments
     x, y = 2, len(lines) + 3
-    while True:
+    while _check_free(rock, lines, x, y):
         match jet[jet_index]:
             case "<":
                 x2 = x - 1
@@ -35,63 +27,48 @@ def _step(rock, jet, jet_index, height, lines):
             case _:
                 raise ValueError()
         jet_index = (jet_index + 1) % len(jet)
-        if 0 <= x2 <= max_x and _check_free(rock, lines, x2, y):
+        if 0 <= x2 <= 7 - width and _check_free(rock, lines, x2, y):
             x = x2
-        if not _check_free(rock, lines, x, y - 1):
-            break
         y -= 1
-    lines = list(lines)
+    y, lines = y + 1, list(lines)
     for rock_y, row in enumerate(rock):
         if y + rock_y >= len(lines):
-            lines.append(row.rjust(x + len(row), ".").ljust(7, "."))
+            lines.append(row << x)
             height += 1
         else:
-            line = list(lines[y + rock_y])
-            for rock_x, char in enumerate(row):
-                if char == "#":
-                    line[x + rock_x] = "#"
-            lines[y + rock_y] = "".join(line)
-    visible, queue = {(0, len(lines))}, [(0, len(lines))]
+            lines[y + rock_y] = lines[y + rock_y] | row << x
+    visible, queue = [0] * len(lines) + [1], [(0, len(lines))]
     while queue:
         x, y = queue.pop()
-        if y < len(lines) and lines[y][x] == "#":
-            continue
-        if x > 0 and (x - 1, y) not in visible:
-            visible.add((x - 1, y))
-            queue.append((x - 1, y))
-        if x < 6 and (x + 1, y) not in visible:
-            visible.add((x + 1, y))
-            queue.append((x + 1, y))
-        if y > 0 and (x, y - 1) not in visible:
-            visible.add((x, y - 1))
-            queue.append((x, y - 1))
-        if y < len(lines) and (x, y + 1) not in visible:
-            visible.add((x, y + 1))
-            queue.append((x, y + 1))
-    lines = [
-        "".join(c if (x, y) in visible else "." for x, c in enumerate(line))
-        for y, line in enumerate(lines)
-    ]
+        for x2, y2 in ((x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)):
+            if (
+                x2 in range(7)
+                and y2 in range(len(visible))
+                and not (visible[y2] & 1 << x2)
+            ):
+                visible[y2] |= 1 << x2
+                if not (y2 < len(lines) and lines[y2] & 1 << x2):
+                    queue.append((x2, y2))
+    lines = [line & row for line, row in zip(lines, visible)]
     trim = 0
-    for trim, line in enumerate(lines):
-        if "#" in line:
-            break
+    while not lines[trim]:
+        trim += 1
     return jet_index, height, lines[trim:]
 
 
 def _solve(jet, count):
-    jet_index, height, lines = 0, 0, ["#######"]
+    jet_index, height, lines = 0, 0, [127]
     seen, heights = {}, []
     for i in range(count):
-        j = seen.setdefault((tuple(lines), jet_index, i % len(ROCKS)), i)
+        rock_index = i % len(ROCKS)
+        width, rock = ROCKS[rock_index]
+        j = seen.setdefault((tuple(lines), jet_index, rock_index), i)
         if j < i:
             return heights[j + (count - j) % (i - j)] + (count - j) // (i - j) * (
                 height - heights[j]
             )
         heights.append(height)
-        jet_index, height, lines = _step(
-            ROCKS[i % len(ROCKS)], jet, jet_index, height, lines
-        )
+        jet_index, height, lines = _step(width, rock, jet, jet_index, height, lines)
     return height
 
 
