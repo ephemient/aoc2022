@@ -32,7 +32,7 @@ class Day17(lines: List<String>) {
                     else -> throw IllegalArgumentException("${jet.take(jetIndex)}$c${jet.drop(jetIndex + 1)}")
                 }
                 jetIndex = (jetIndex + 1) % jet.length
-                x = if (x2 in 0..7 - width && !state.contains(x2, y, rock)) x2 else x
+                if (x2 in 0..7 - width && !state.contains(x2, y, rock)) x = x2
                 y--
             }
             heights.add(state.height)
