@@ -4,58 +4,76 @@ Description:    <https://adventofcode.com/2022/day/17 Day 17: Pyroclastic Flow>
 -}
 module Day17 (day17) where
 
-import Control.Arrow (second)
-import Data.IntSet (IntSet)
-import qualified Data.IntSet as IntSet (findMax, fromDistinctAscList, fromList, intersection, insert, mapMonotonic, member, notMember, singleton, union)
-import Data.List (foldl', scanl')
+import Control.Monad (filterM, forM_)
+import Data.Bits ((.&.), (.|.), bit, setBit, shiftL, testBit)
+import Data.Ix (inRange)
+import Data.List (scanl')
 import qualified Data.Map as Map (empty, insert, lookup)
 import Data.Maybe (listToMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T (index, length, lines)
+import Data.Vector.Unboxed (Vector)
+import qualified Data.Vector.Unboxed as V (all, create, drop, fromList, iforM_, length, singleton, thaw, zipWith)
+import qualified Data.Vector.Unboxed.Mutable as MV (drop, grow, iforM_, length, modify, read, replicate, write)
+import Data.Word (Word8)
 
-rocks :: [[String]]
-rocks = [["####"], [".#.", "###", ".#."], ["###", "..#", "..#"], ["#", "#", "#", "#"], ["##", "##"]]
+rocks :: [(Int, Vector Word8)]
+rocks =
+  [ (4, V.singleton 15)
+  , (3, V.fromList [2, 7, 2])
+  , (3, V.fromList [7, 4, 4])
+  , (1, V.fromList [1, 1, 1, 1])
+  , (2, V.fromList [3, 3])
+  ]
 
-height :: IntSet -> Int
-height = (`div` 7) . IntSet.findMax
-
-fall :: Text -> (Int, IntSet) -> [String] -> (Int, IntSet)
-fall jet (i, set) rock = fall' i 2 (maxY + 4) where
-    maxX = 7 - maximum (length <$> rock)
-    maxY = height set
-    offset x y = [7 * ry + rx | (ry, row) <- zip [y..] rock, (rx, '#') <- zip [x..] row]
+fall :: Text -> (Int, Int, Vector Word8) -> (Int, Vector Word8) -> (Int, Int, Vector Word8)
+fall jet (i, height, lines) (width, rock) = fall' i 2 (V.length lines + 3) where
+    ok x y = V.all (== 0) . V.zipWith ((.&.) . (`shiftL` x)) rock $ V.drop y lines
     fall' i x y
-      | any (flip IntSet.member set) $ offset x'' (y - 1)
-      = (i', cleanup . IntSet.union set . IntSet.fromList $ offset x'' y)
-      | otherwise = fall' i' x'' (y - 1)
+      | not $ ok x y
+      = (i, height + max 0 (y + 1 + V.length rock - V.length lines), place x $ y + 1)
+      | inRange (0, 7 - width) x' && ok x' y = fall' i' x' $ y - 1
+      | otherwise = fall' i' x $ y - 1
       where
         c = T.index jet i
         i' = (i + 1) `mod` T.length jet
         x' | '<' <- c = x - 1 | '>' <- c = x + 1
-        x'' = if x' < 0 || x' > maxX || any (flip IntSet.member set) (offset x' y) then x else x'
-        stop = any (flip IntSet.member set) $ offset x'' (y - 1)
-    cleanup set = reachable (IntSet.singleton p0) [p0] where
-        p0 = 7 * (height set + 1)
-        reachable seen [] = IntSet.intersection set seen
-        reachable seen (p:q)
-          | IntSet.member p set = reachable (IntSet.insert p seen) q
-          | otherwise = reachable (foldl' (flip IntSet.insert) seen ps) $ ps ++ q where
-            ps = filter (flip IntSet.notMember seen) $ p - 7 :
-                [p - 1 | p `mod` 7 /= 0] ++ [p + 1 | p `mod` 7 /= 6] ++ [p + 7 | p + 6 < p0]
+    place x y = V.create $ do
+        lines <- V.thaw lines >>= flip MV.grow (max 0 $ y + V.length rock - V.length lines)
+        V.iforM_ rock $ \dy row -> MV.modify lines (.|. row `shiftL` x) $ y + dy
+        visible <- MV.replicate (MV.length lines + 1) 0
+        MV.write visible (MV.length lines) $ bit 0
+        let dfs [] = MV.iforM_ lines $ \y row -> MV.read visible y >>= MV.write lines y . (.&. row)
+            dfs ((x, y):q) = do
+                let next = [(x - 1, y) | x > 0] ++ [(x + 1, y) | x < 6] ++
+                        [(x, y - 1) | y > 0] ++ [(x, y + 1) | y < MV.length lines]
+                next <- flip filterM next $ \(x, y) ->
+                    not . flip testBit x <$> MV.read visible y
+                forM_ next $ \(x, y) -> MV.modify visible (flip setBit x) y
+                next <- flip filterM next $ \(x, y) -> if y < MV.length lines
+                  then not . flip testBit x <$> MV.read lines y
+                  else pure True
+                dfs $ next ++ q
+            f y k = MV.read lines y >>= \row -> if row == 0 then k else pure $ MV.drop y lines
+        dfs [(0, MV.length lines)]
+        foldr f (fail "error") [0..MV.length lines - 1]
 
-findCycle :: (Ord a) => [a] -> Maybe (Int, Int)
-findCycle xs = listToMaybe [(i, j) | (j, Just i) <- zip [0..] $ zipWith Map.lookup xs ixs] where
-    ixs = scanl' (flip $ uncurry Map.insert) Map.empty $ zip xs [0..]
+findCycle :: (Ord a) => [(a, b)] -> Maybe ((Int, b), (Int, b))
+findCycle xs = listToMaybe
+    [(a, b) | (b, Just a) <- zip (zip [0..] $ snd <$> xs) $ zipWith (Map.lookup . fst) xs ixs]
+  where
+    ixs = scanl' f Map.empty $ zip [0..] xs
+    f ixs' (i, (a, b)) = Map.insert a (i, b) ixs'
 
 day17 :: Int -> Text -> Int
 day17 n input
-  | Just (i, j) <- findCycle . zip (cycle [1..length rocks]) $ second normalize <$> take n states
-  = let height1 = height (snd $ states !! i)
-        height2 = height (snd $ states !! j)
-        (q, r) = (n - i) `divMod` (j - i)
-     in height (snd $ states !! (i + r)) + q * (height2 - height1)
-  | otherwise = height . snd $ states !! n
+  | Just ((i, height1), (j, height2)) <- findCycle $ take n heights
+  = let (q, r) = (n - i) `divMod` (j - i) in snd (heights !! (i + r)) + q * (height2 - height1)
+  | otherwise = snd $ heights !! n
   where
     [jet] = T.lines input
-    states = scanl' (fall jet) (0, IntSet.fromDistinctAscList [0..6]) (cycle rocks)
-    normalize set = IntSet.mapMonotonic (subtract $ 7 * height set) set
+    heights =
+      [ ((i, j, lines), height)
+      | (i, (j, height, lines)) <- zip (cycle [1..length rocks]) $
+            scanl' (fall jet) (0, 0, V.singleton 127) $ cycle rocks
+      ]
