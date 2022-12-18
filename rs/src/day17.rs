@@ -116,7 +116,7 @@ fn solve(jet: &[i8], n: u64) -> u64 {
             let r = (n - j) % (i - j);
             return heights[(j + r) as usize] + q * (state.height - heights[j as usize]);
         }
-        let rock = &ROCKS[(i % ROCKS.len() as u64) as usize];
+        let rock = &ROCKS[rock_index];
         let (mut x, mut y) = (2u8, state.visible.len() + 3);
         while !state.contains(x, y, rock) {
             x = x
