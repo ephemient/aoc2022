@@ -13,6 +13,7 @@ class Day18(lines: List<String>) {
     fun part1(): Int = points.sumOf { point -> point.neighbors().count { it !in points } }
 
     @Day.Part
+    @Suppress("CyclomaticComplexMethod")
     fun part2(): Int {
         var minX = Int.MAX_VALUE
         var maxX = Int.MIN_VALUE
