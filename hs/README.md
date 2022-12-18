@@ -27,3 +27,15 @@ Print solutions for the inputs provided in local data files:
 ```sh
 cabal run aoc2022-exe
 ```
+
+Generate [Haddock](https://www.haskell.org/haddock/) API documentation:
+
+```sh
+stack haddock aoc2021:lib
+```
+
+Run [hlint](https://github.com/ndmitchell/hlint) source code suggestions:
+
+```sh
+stack build hlint --exec 'hlint src test bench'
+```

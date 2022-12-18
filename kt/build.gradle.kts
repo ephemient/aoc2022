@@ -20,7 +20,7 @@ dependencies {
     detektPlugins(libs.detekt.formatting)
 }
 
-val jvmResources by tasks.registering(Sync::class) {
+val inputResources by tasks.registering(Sync::class) {
     from(rootDir.parentFile)
     into(layout.buildDirectory.dir("generated/source/$name"))
     include("day*.txt")
@@ -50,6 +50,7 @@ kotlin {
             jvmTestFixtures(compilations.getByName("test").runtimeDependencyFiles)
         }
         project.dependencies.add("ksp${name.capitalized()}", projects.processor)
+        project.dependencies.add("ksp${name.capitalized()}", projects.processorBench)
     }
     presets.withType<KotlinNativeTargetWithHostTestsPreset> {
         targetFromPreset(this) {
@@ -58,8 +59,38 @@ kotlin {
             }
             compilations.create("bench")
             project.dependencies.add("ksp${name.capitalized()}", projects.processor)
+            project.dependencies.add("ksp${name.capitalized()}", projects.processorBench)
         }
     }
+//    js(IR) {
+//        useCommonJs()
+//        binaries.executable()
+//        browser {
+//            commonWebpackConfig {
+//                devServer?.open = false
+//            }
+//        }
+//        val main by compilations.getting
+//        nodejs {
+//            runTask {
+//                println(">>> $name <<<")
+//                inputFileProperty.fileProvider(
+//                    main.compileKotlinTaskProvider
+//                        .flatMap { it.outputFileProperty }
+//                        .map { File(it.parentFile, "index.js").also { println(">>> $it") } }
+//                )
+//            }
+//        }
+//        main.packageJson { customField("main", "index.js") }
+//        compilations.create("bench")
+//        project.dependencies.add("ksp${name.capitalized()}", projects.processorJs)
+//    }
+//    wasm {
+//        binaries.executable()
+//        d8()
+//        project.dependencies.add("ksp${name.capitalized()}", projects.processor)
+//        project.dependencies.add("ksp${name.capitalized()}", projects.processorJs)
+//    }
 
     sourceSets {
         val commonMain by getting
@@ -73,6 +104,10 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.benchmark)
             }
+        }
+
+        val executableMain by creating {
+            dependsOn(commonMain)
         }
 
         fun KotlinSourceSet.syncKspKotlinMain() {
@@ -90,7 +125,8 @@ kotlin {
         }
 
         val jvmMain by getting {
-            resources.srcDir(jvmResources)
+            dependsOn(executableMain)
+            resources.srcDir(inputResources)
         }
         getByName("jvmTest") {
             dependencies {
@@ -107,6 +143,7 @@ kotlin {
 
         val nativeMain by creating {
             dependsOn(commonMain)
+            dependsOn(executableMain)
         }
         val nativeTest by creating {
             dependsOn(commonTest)
@@ -128,6 +165,20 @@ kotlin {
             }
         }
 
+//        val jsMain by getting {
+//            resources.srcDir(inputResources)
+//        }
+//        getByName("jsBench") {
+//            dependsOn(executableMain)
+//            dependsOn(commonBench)
+//            dependsOn(jsMain)
+//            syncKspKotlinMain()
+//        }
+
+//        getByName("wasmMain") {
+//            dependsOn(executableMain)
+//        }
+
         all {
             if (name.endsWith("Main")) resources.exclude("**/*Bench.kt.txt")
         }
@@ -140,6 +191,7 @@ benchmark {
         kotlin.targets.withType<KotlinNativeTargetWithHostTests> {
             register("${name}Bench")
         }
+//        register("jsBench")
     }
 
     configurations {

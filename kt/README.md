@@ -21,6 +21,12 @@ Print solutions for the inputs provided in local data files:
 env aoc2022_data=.. ./gradlew :runJvm :run{Debug,Release}Executable{Linux{X64,Arm64},MingwX86,Macos{X64,Arm64}}
 ```
 
+Generate [Dokka](https://github.com/Kotlin/dokka) API documentation:
+
+```sh
+./gradlew :dokkaHtml
+```
+
 Run all checks, including [Detekt](https://detekt.github.io/) static code analysis and [ktlint](https://ktlint.github.io/) formatter:
 
 ```sh
