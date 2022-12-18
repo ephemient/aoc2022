@@ -3,8 +3,8 @@
 
 Development occurs in language-specific directories:
 
-|[Haskell](hs) ![Haskell CI](https://github.com/ephemient/aoc2022/workflows/Haskell%20CI/badge.svg)|[Kotlin](kt) ![Kotlin CI](https://github.com/ephemient/aoc2022/workflows/Kotlin%20CI/badge.svg)|[Python](py) ![Python CI](https://github.com/ephemient/aoc2022/workflows/Python%20CI/badge.svg)|[Rust](rs) ![Rust CI](https://github.com/ephemient/aoc2022/workflows/Rust%20CI/badge.svg)|
-|--:|--:|--:|--:|
+|[Haskell](hs) ![Haskell CI](https://github.com/ephemient/aoc2022/workflows/Haskell%20CI/badge.svg)|[Kotlin](kt) ![Kotlin CI](https://github.com/ephemient/aoc2022/workflows/Kotlin%20CI/badge.svg)|[Python](py) ![Python CI](https://github.com/ephemient/aoc2022/workflows/Python%20CI/badge.svg)|[Rust](rs) ![Rust CI](https://github.com/ephemient/aoc2022/workflows/Rust%20CI/badge.svg)||
+|--:|--:|--:|--:|:--|
 |[Day1.hs](hs/src/Day1.hs)|[Day1.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day1.kt)|[day1.py](py/aoc2022/day1.py)|[day1.rs](rs/src/day1.rs)|
 |[Day2.hs](hs/src/Day2.hs)|[Day2.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day2.kt)|[day2.py](py/aoc2022/day2.py)|[day2.rs](rs/src/day2.rs)|
 |[Day3.hs](hs/src/Day3.hs)|[Day3.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day3.kt)|[day3.py](py/aoc2022/day3.py)|[day3.rs](rs/src/day3.rs)|
@@ -21,6 +21,6 @@ Development occurs in language-specific directories:
 |[Day13Fast.hs](hs/src/Day13Fast.hs)|[Day13Fast.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day13Fast.kt)|[day13_fast.py](py/aoc2022/day13_fast.py)|[day13_fast.rs](rs/src/day13_fast.rs)|
 |[Day14.hs](hs/src/Day14.hs)|[Day14.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day14.kt)|[day14.py](py/aoc2022/day14.py)|[day14.rs](rs/src/day14.rs)|
 |[Day15.hs](hs/src/Day15.hs)|[Day15.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day15.kt)|[day15.py](py/aoc2022/day15.py)|[day15.rs](rs/src/day15.rs)|
-|[Day16.hs](hs/src/Day16.hs)|[Day16.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day16.kt)|[day16.py](py/aoc2022/day16.py)|[day16.rs](rs/src/day16.rs)|
-|[Day17.hs](hs/src/Day17.hs)|[Day17.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day17.kt)|[day17.py](py/aoc2022/day17.py)|
+|[Day16.hs](hs/src/Day16.hs)|[Day16.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day16.kt)|[day16.py](py/aoc2022/day16.py)|\*[day16.rs](rs/src/day16.rs)|&frac12;|
+|[Day17.hs](hs/src/Day17.hs)|[Day17.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day17.kt)|[day17.py](py/aoc2022/day17.py)|[day18.rs](rs/src/day17.rs)|
 |[Day18.hs](hs/src/Day18.hs)|[Day18.kt](kt/src/commonMain/kotlin/com/github/ephemient/aoc2022/Day18.kt)|[day18.py](py/aoc2022/day18.py)|[day18.rs](rs/src/day18.rs)|
