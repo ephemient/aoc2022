@@ -12,6 +12,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -118,7 +119,28 @@ class MainProcessor(
                         FunSpec.builder(it.simpleName.asString())
                             .addAnnotation(ClassName("kotlinx.benchmark", "Benchmark"))
                             .returns(it.returnType?.resolve()?.toTypeName() ?: UNIT)
-                            .addStatement("return %T(lines).%N()", container.toClassName(), it.simpleName.asString())
+                            .addCode(
+                                buildCodeBlock {
+                                    if (Modifier.SUSPEND in it.modifiers) {
+                                        beginControlFlow(
+                                            "return %M",
+                                            MemberName("kotlinx.coroutines", "runBlocking")
+                                        )
+                                        addStatement(
+                                            "%T(lines).%N()",
+                                            container.toClassName(),
+                                            it.simpleName.asString(),
+                                        )
+                                        endControlFlow()
+                                    } else {
+                                        addStatement(
+                                            "return %T(lines).%N()",
+                                            container.toClassName(),
+                                            it.simpleName.asString(),
+                                        )
+                                    }
+                                }
+                            )
                             .build()
                     }.orEmpty()
                 )
