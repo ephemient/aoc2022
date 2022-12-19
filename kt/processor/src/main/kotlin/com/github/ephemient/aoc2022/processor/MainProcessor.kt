@@ -37,7 +37,7 @@ class MainProcessor(
     private val platforms: List<PlatformInfo>,
 ) : SymbolProcessor {
 
-    @Suppress("LongMethod")
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val containers = resolver.getSymbolsWithAnnotation("com.github.ephemient.aoc2022.Day")
             .filterIsInstance<KSClassDeclaration>()
