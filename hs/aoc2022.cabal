@@ -63,6 +63,7 @@ library
       , heap ^>=1.0.4
       , megaparsec ^>=9.3.0
       , mtl ^>=2.2.2
+      , parallel ^>=3.2.2.0
       , primitive ^>=0.7.4.0
       , split ^>=0.2.3.5
       , template-haskell ^>=2.18.0.0
