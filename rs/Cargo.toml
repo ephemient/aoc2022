@@ -33,3 +33,9 @@ pretty_assertions = "1"
 [[bench]]
 name = "criterion"
 harness = false
+
+[profile.dev]
+opt-level = 1
+
+[profile.test]
+opt-level = 3
