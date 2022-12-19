@@ -20,7 +20,7 @@ import Day15 (day15a, day15b)
 import Day16 (day16)
 import Day17 (day17)
 import Day18 (day18a, day18b)
-import Day19 (day19a)
+import Day19 (day19a, day19b)
 
 import Control.Monad ((<=<), ap, when)
 import Data.Function (on)
@@ -68,4 +68,4 @@ main = do
     run 16 (either (fail . errorBundlePretty) print) [day16 1 30, day16 2 26]
     run 17 print [day17 2022, day17 1000000000000]
     run 18 print [day18a, day18b]
-    run 19 print [day19a]
+    run 19 (either (fail . errorBundlePretty) print) [day19a, fmap product . day19b 3]

@@ -3,7 +3,7 @@ module Day19Spec (spec) where
 
 import Data.Text (Text)
 import qualified Data.Text as T (unlines)
-import Day19 (day19a)
+import Day19 (day19a, day19b)
 import Test.Hspec (Spec, describe, it, shouldBe)
 
 example :: Text
@@ -26,3 +26,6 @@ spec = do
     describe "part 1" $ do
         it "examples" $ do
             day19a example `shouldBe` Right 33
+    describe "part 2" $ do
+        it "examples" $ do
+            day19b 2 example `shouldBe` Right [56, 62]

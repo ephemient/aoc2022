@@ -3,7 +3,7 @@ Module:         Day19
 Description:    <https://adventofcode.com/2022/day/19 Day 19: Not Enough Minerals>
 -}
 {-# LANGUAGE OverloadedStrings, TypeFamilies #-}
-module Day19 (day19a) where
+module Day19 (day19a, day19b) where
 
 import Control.Arrow (second)
 import Control.Parallel.Strategies (parMap, rseq)
@@ -21,8 +21,8 @@ import Text.Megaparsec (MonadParsec, ParseErrorBundle, Token, Tokens, between, e
 import Text.Megaparsec.Char (char, space, string)
 import qualified Text.Megaparsec.Char.Lexer as L (decimal)
 
-parser :: (Integral a, Integral b, MonadParsec e s m, IsString (Tokens s), Token s ~ Char) => m (Map a (Map (Tokens s) (Map (Tokens s) b)))
-parser = Map.fromList <$> many blueprint where
+parser :: (Integral a, Integral b, MonadParsec e s m, IsString (Tokens s), Token s ~ Char) => m [(a, Map (Tokens s) (Map (Tokens s) b))]
+parser = many blueprint where
     blueprint = (,) <$> between (string "Blueprint ") (char ':' >> space) L.decimal <*>
         (Map.fromList <$> (robot <* char '.') `sepEndBy` space)
     robot = (,) <$> between (string "Each ") (string " robot costs ") name <*>
@@ -59,7 +59,9 @@ geodes n blueprint = go 0 (initialRobots, initialResources, n, []) where
           ]
 
 day19a :: Text -> Either (ParseErrorBundle Text Void) Int
-day19a input = do
-    blueprints <- parse (parser @Int @Int @Void <* eof) "day19.txt" input
-    pure . sum . fmap (uncurry (*)) .
-        parMap rseq (traceShowId . second (geodes 24)) $ Map.toList blueprints
+day19a input = sum . fmap (uncurry (*)) . parMap rseq (traceShowId . second (geodes 24)) <$>
+    parse (parser @Int @Int @Void <* eof) "day19.txt" input
+
+day19b :: Int -> Text -> Either (ParseErrorBundle Text Void) [Int]
+day19b n input = fmap snd . parMap rseq (traceShowId . second (geodes 32)) . take n <$>
+    parse (parser @Int @Int @Void <* eof) "day19.txt" input
