@@ -1,7 +1,10 @@
 package com.github.ephemient.aoc2022.processor
 
 import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.JsPlatformInfo
+import com.google.devtools.ksp.processing.JvmPlatformInfo
 import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.PlatformInfo
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -28,7 +31,11 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-class MainProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
+class MainProcessor(
+    private val codeGenerator: CodeGenerator,
+    private val logger: KSPLogger,
+    private val platforms: List<PlatformInfo>,
+) : SymbolProcessor {
 
     @Suppress("LongMethod")
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -53,7 +60,9 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
 
         val getInput = MemberName("com.github.ephemient.aoc2022", "getInput")
         if (containers.isNotEmpty()) {
+            val isSuspendFunMainSupported = platforms.all { it is JvmPlatformInfo || it is JsPlatformInfo }
             val mainCode = buildCodeBlock {
+                if (!isSuspendFunMainSupported) beginControlFlow("%M", MemberName("kotlinx.coroutines", "runBlocking"))
                 for (container in containers) {
                     val id = container.simpleName.asString().removePrefix("Day")
                     val day = id.takeWhile { it.isDigit() }.toIntOrNull() ?: 0
@@ -69,13 +78,14 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
                     addStatement("println()")
                     endControlFlow()
                 }
+                if (!isSuspendFunMainSupported) endControlFlow()
             }
-            val mainSpec = FunSpec.builder("main")
+            val mainSpecBuilder = FunSpec.builder("main")
                 .addParameter("args", ARRAY.parameterizedBy(STRING))
                 .addCode(mainCode)
-                .build()
+            if (isSuspendFunMainSupported) mainSpecBuilder.addModifiers(KModifier.SUSPEND)
             val fileSpec = FileSpec.builder("com.github.ephemient.aoc2022", "Main")
-                .addFunction(mainSpec)
+                .addFunction(mainSpecBuilder.build())
                 .build()
             fileSpec.writeTo(codeGenerator, fileSpec.kspDependencies(true, containers.mapNotNull { it.containingFile }))
         }
@@ -129,6 +139,6 @@ class MainProcessor(private val codeGenerator: CodeGenerator, private val logger
 
     class Provider : SymbolProcessorProvider {
         override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
-            MainProcessor(environment.codeGenerator, environment.logger)
+            MainProcessor(environment.codeGenerator, environment.logger, environment.platforms)
     }
 }
