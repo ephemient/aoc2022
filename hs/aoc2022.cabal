@@ -29,6 +29,7 @@ data-files:
   , day16.txt
   , day17.txt
   , day18.txt
+  , day19.txt
 
 extra-source-files:
     README.md
@@ -54,27 +55,18 @@ library
       , Day16
       , Day17
       , Day18
+      , Day19
     build-depends:
         array ^>=0.5.4.0
       , base ^>=4.16.0.0
       , containers ^>=0.6.5.1
-      , deepseq ^>=1.4.4.0
-      , fgl ^>=5.8.0.0
-      , filepath ^>=1.4.2.1
-      , finite-typelits ^>= 0.1.6.0
-      , hashable ^>=1.4.1.0
       , heap ^>=1.0.4
       , megaparsec ^>=9.3.0
-      , monad-loops ^>=0.4.3
       , mtl ^>=2.2.2
-      , parallel ^>=3.2.2.0
-      , parser-combinators ^>=1.3.0
       , primitive ^>=0.7.4.0
-      , random ^>=1.2.1.1
       , split ^>=0.2.3.5
       , template-haskell ^>=2.18.0.0
       , text ^>=2.0.0
-      , unordered-containers ^>=0.2.19.1
       , vector ^>=0.13.0.0
     other-modules:
         Common
@@ -123,6 +115,7 @@ test-suite aoc2022-test
       , Day16Spec
       , Day17Spec
       , Day18Spec
+      , Day19Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:
