@@ -31,7 +31,7 @@ parser = many blueprint where
     name = takeWhile1P Nothing isAlphaNum
 
 geodes :: (IsString k, Ord k, Num v, Ord v) => Int -> Map k (Map k v) -> v
-geodes n blueprint = go 0 (initialRobots, initialResources, n, []) where
+geodes n blueprint = go 0 (initialRobots, initialResources, n) where
     initialRobots = Map.insert "ore" 1 $ const 0 <$> blueprint
     initialResources = const 0 <$> blueprint
     potential robots resources m = potentialResources !! m Map.! "geode" where
@@ -44,12 +44,12 @@ geodes n blueprint = go 0 (initialRobots, initialResources, n, []) where
                   | otherwise = new
           ]
         potentialResources = scanl' (Map.unionWith (+)) resources potentialRobots
-    go k (_, _, 0, log) = k
-    go k (robots, resources, m, log)
+    go k (_, _, 0) = k
+    go k (robots, resources, m)
       | k > potential robots resources m = k
       | otherwise = foldl' go
           (max k $ resources Map.! "geode" + fromIntegral m * robots Map.! "geode")
-          [ (robots', resources'', m - d - 1, (n - m + d, robot):log)
+          [ (robots', resources'', m - d - 1)
           | (robot, costs) <- Map.toList blueprint
           , (d, resources') <- take 1 $ dropWhile (any (< 0) . snd) $
                 zip [0..m - 1] $ iterate (Map.unionWith (+) robots) $
