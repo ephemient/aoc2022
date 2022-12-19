@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 class Day19(lines: List<String>) {
     private val blueprints = lines.map { line ->
         val (id) = ID_PATTERN.matchAt(line, 0)!!.destructured
-        id.toInt() to PART_PATTERN.findAll(line).associate { match ->
-            val (type, costs) = match.destructured
-            type to COST_PATTERN.findAll(costs).associate { match ->
-                val (cost, type) = match.destructured
+        id.toInt() to PART_PATTERN.findAll(line).associate { partMatch ->
+            val (robot, costs) = partMatch.destructured
+            robot to COST_PATTERN.findAll(costs).associate { costMatch ->
+                val (cost, type) = costMatch.destructured
                 type to cost.toInt()
             }
         }
@@ -50,10 +50,14 @@ class Day19(lines: List<String>) {
 
         private fun <T> Map<T, Int>.get0(key: T): Int = getOrElse(key) { 0 }
 
-        private fun geodes(blueprint: Map<String, Map<String, Int>>, time: Int): Int =
-            DeepRecursiveFunction<IndexedValue<State>, Int> { (best, state) ->
-                if (potential(blueprint, state) < best) return@DeepRecursiveFunction best
-                blueprint.entries.fold(maxOf(best, state.estimate)) { best, (robot, costs) ->
+        private fun geodes(blueprint: Map<String, Map<String, Int>>, time: Int): Int {
+            var best = 0
+            val queue = mutableListOf(State(mapOf("ore" to 1), emptyMap(), time))
+            while (queue.isNotEmpty()) {
+                val state = queue.removeLast()
+                if (potential(blueprint, state) < best) continue
+                if (state.estimate > best) best = state.estimate
+                for ((robot, costs) in blueprint) {
                     val delta = blueprint.keys.maxOf { type ->
                         val demand = costs.get0(type) - state.resources.get0(type)
                         if (demand <= 0) {
@@ -70,12 +74,12 @@ class Day19(lines: List<String>) {
                             for ((type, cost) in costs) this[type] = this.get0(type) - cost
                             for ((type, count) in state.robots) this[type] = this.get0(type) + count * (delta + 1)
                         }
-                        callRecursive(IndexedValue(best, State(robots, resources, state.time - delta - 1)))
-                    } else {
-                        best
+                        queue.add(State(robots, resources, state.time - delta - 1))
                     }
                 }
-            }(IndexedValue(0, State(mapOf("ore" to 1), emptyMap(), time)))
+            }
+            return best
+        }
 
         private fun potential(blueprint: Map<String, Map<String, Int>>, state: State): Int {
             val potentialRobots = blueprint.keys.associateWithTo(mutableMapOf()) { 0 }
