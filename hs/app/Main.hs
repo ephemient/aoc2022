@@ -68,4 +68,4 @@ main = do
     run 16 (either (fail . errorBundlePretty) print) [day16 1 30, day16 2 26]
     run 17 print [day17 2022, day17 1000000000000]
     run 18 print [day18a, day18b]
-    run 19 (either (fail . errorBundlePretty) print) [day19a, fmap product . day19b 3]
+    run 19 (either (fail . errorBundlePretty) print) [day19a, day19b]

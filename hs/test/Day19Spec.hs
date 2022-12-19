@@ -28,4 +28,4 @@ spec = do
             day19a example `shouldBe` Right 33
     describe "part 2" $ do
         it "examples" $ do
-            day19b 2 example `shouldBe` Right [56, 62]
+            day19b example `shouldBe` Right (56 * 62)

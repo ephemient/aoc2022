@@ -114,6 +114,6 @@ main = defaultMain
   , envWithCleanup ((,) <$> getDayInput 19 <*> setTrace "0")
         (unsetTrace . snd) $ fst >>> \input -> bgroup "Day 19"
           [ bench "part 1" $ nf day19a input
-          , bench "part 2" $ nf (fmap product . day19b 3) input
+          , bench "part 2" $ nf day19b input
           ]
   ]

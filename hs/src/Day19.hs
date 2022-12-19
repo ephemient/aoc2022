@@ -62,6 +62,6 @@ day19a :: Text -> Either (ParseErrorBundle Text Void) Int
 day19a input = sum . fmap (uncurry (*)) . parMap rseq (traceShowId . second (geodes 24)) <$>
     parse (parser @Int @Int @Void <* eof) "day19.txt" input
 
-day19b :: Int -> Text -> Either (ParseErrorBundle Text Void) [Int]
-day19b n input = fmap snd . parMap rseq (traceShowId . second (geodes 32)) . take n <$>
+day19b :: Text -> Either (ParseErrorBundle Text Void) Int
+day19b input = product . parMap rseq (snd . traceShowId . second (geodes 32)) . take 3 <$>
     parse (parser @Int @Int @Void <* eof) "day19.txt" input
