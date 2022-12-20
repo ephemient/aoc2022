@@ -74,7 +74,7 @@ where
             if !self.seen.insert(t.clone()) {
                 continue;
             }
-            self.best_estimate = Some(self.best_estimate.map_or(r, |s| max(r, s)));
+            self.best_estimate = max(self.best_estimate, Some(r));
             let (potential, nexts) = (self.next)(&t);
             if let Some(potential) = potential {
                 if let Some(best_estimate) = self.best_estimate {
@@ -162,64 +162,46 @@ where
                 moves.entry(d).or_insert_with(|| [(); N].map(|_| vec![]))[i].push(valve);
             }
         }
-        if moves
-            .iter()
-            .all(|(_, moves)| moves.iter().all(|moves| moves.is_empty()))
-        {
-            return (None, vec![]);
-        }
+        // if moves
+        //     .iter()
+        //     .all(|(_, moves)| moves.iter().all(|moves| moves.is_empty()))
+        // {
+        //     return (None, vec![]);
+        // }
         let mut options = vec![];
         for (d, moves) in moves {
-            'powerset: for bitmask in 1..1 << N {
-                let mut indices = [None; N];
-                for i in 0..N {
-                    if bitmask & 1 << i != 0 {
-                        if moves[i].is_empty() {
-                            continue 'powerset;
-                        }
-                        indices[i] = Some(0);
+            let mut indices = [None; N];
+            while indices.iter_mut().enumerate().any(|(i, index)| {
+                *index = Some(index.map_or(0, |index| index + 1))
+                    .filter(|&index| index < moves[i].len());
+                index.is_some()
+            }) {
+                let mut valves = BTreeSet::new();
+                if !indices
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, index)| Some((i, index.as_ref()?)))
+                    .all(|(i, &index)| valves.insert(moves[i][index]))
+                {
+                    continue;
+                }
+                let mut rooms = state.rooms;
+                for (i, &index) in indices.iter().enumerate() {
+                    match index {
+                        Some(index) => rooms[i] = (moves[i][index], 0),
+                        _ => rooms[i].1 += d + 1,
                     }
                 }
-                loop {
-                    let mut valves = BTreeSet::new();
-                    if indices
-                        .iter()
-                        .enumerate()
-                        .filter_map(|(i, index)| Some((i, index.as_ref()?)))
-                        .all(|(i, index)| valves.insert(moves[i][*index]))
-                    {
-                        let mut rooms = state.rooms;
-                        for i in 0..N {
-                            if let Some(index) = indices[i] {
-                                rooms[i] = (moves[i][index], 0);
-                            } else {
-                                rooms[i].1 += d + 1;
-                            }
-                        }
-                        rooms.sort_unstable();
-                        let rate = valves.iter().map(|&valve| graph[valve].0).sum::<usize>();
-                        let new_state = State {
-                            rooms,
-                            valves: state.valves.difference(&valves).copied().collect(),
-                            flow: state.flow + rate,
-                            total: state.total + state.flow * (d + 1),
-                            time: state.time - d - 1,
-                        };
-                        options.push((estimate + rate * new_state.time, new_state));
-                    }
-                    let is_done = indices
-                        .iter_mut()
-                        .enumerate()
-                        .filter_map(|(i, index)| Some((i, index.as_mut()?)))
-                        .all(|(i, index)| {
-                            let carry = *index + 1 == moves[i].len();
-                            *index = if carry { 0 } else { *index + 1 };
-                            carry
-                        });
-                    if is_done {
-                        break;
-                    }
-                }
+                rooms.sort_unstable();
+                let rate = valves.iter().map(|&valve| graph[valve].0).sum::<usize>();
+                let new_state = State {
+                    rooms,
+                    valves: state.valves.difference(&valves).copied().collect(),
+                    flow: state.flow + rate,
+                    total: state.total + state.flow * (d + 1),
+                    time: state.time - d - 1,
+                };
+                options.push((estimate + rate * new_state.time, new_state));
             }
         }
         (Some(potential), options)
