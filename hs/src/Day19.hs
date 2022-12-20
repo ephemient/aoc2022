@@ -11,7 +11,7 @@ import Data.Char (isAlphaNum)
 import qualified Data.Heap as Heap (FstMaxPolicy, insert, singleton, view)
 import Data.List (foldl', scanl', transpose)
 import Data.Map (Map)
-import qualified Data.Map as Map ((!), fromDistinctAscList, fromList, keys, insert, insertWith, toAscList, toList, unionWith)
+import qualified Data.Map as Map ((!), (!?), elems, fromDistinctAscList, fromList, keys, insert, insertWith, toAscList, toList, unionWith, unionsWith)
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text (Text)
@@ -32,6 +32,7 @@ parser = many blueprint where
 
 geodes :: (IsString k, Ord k, Num v, Ord v) => Int -> Map k (Map k v) -> v
 geodes n blueprint = go 0 (initialRobots, initialResources, n) where
+    maxValues = Map.unionsWith max $ Map.elems blueprint
     initialRobots = Map.insert "ore" 1 $ const 0 <$> blueprint
     initialResources = const 0 <$> blueprint
     potential robots resources m = potentialResources !! m Map.! "geode" where
@@ -51,6 +52,7 @@ geodes n blueprint = go 0 (initialRobots, initialResources, n) where
           (max k $ resources Map.! "geode" + fromIntegral m * robots Map.! "geode")
           [ (robots', resources'', m - d - 1)
           | (robot, costs) <- Map.toList blueprint
+          , maybe True (robots Map.! robot <) $ maxValues Map.!? robot
           , (d, resources') <- take 1 $ dropWhile (any (< 0) . snd) $
                 zip [0..m - 1] $ iterate (Map.unionWith (+) robots) $
                 Map.unionWith (+) resources $ negate <$> costs
