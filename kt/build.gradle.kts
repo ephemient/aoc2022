@@ -56,12 +56,18 @@ kotlin {
         targetFromPreset(this) {
             binaries.executable {
                 entryPoint("com.github.ephemient.aoc2022.main")
+                runTaskProvider?.configure {
+                    inputs.files(jvmResources).withPropertyName("aoc2022_datadir")
+                    environment("aoc2022_datadir", jvmResources.get().destinationDir)
+                }
             }
             compilations.create("bench")
             testRuns.all {
                 tasks.named<KotlinNativeHostTest>("${this@targetFromPreset.name}${name.capitalized()}") {
-                    inputs.files("src/jvmTest/resources").withPropertyName("aoc2022_test_datadir")
-                    environment("aoc2022_test_datadir", file("src/jvmTest/resources"))
+                    if (providers.environmentVariable("aoc2022_test_datadir").orNull.isNullOrEmpty()) {
+                        inputs.files("src/jvmTest/resources").withPropertyName("aoc2022_test_datadir")
+                        environment("aoc2022_test_datadir", file("src/jvmTest/resources"))
+                    }
                 }
             }
             project.dependencies.add("ksp${name.capitalized()}", projects.processor)

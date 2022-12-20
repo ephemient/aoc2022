@@ -31,6 +31,17 @@ val agentRun by tasks.registering(JavaExec::class) {
 
 tasks.test {
     javaLauncher.set(graalvmJavaLauncher)
+    if (providers.environmentVariable("aoc2022_test_datadir").orNull.isNullOrEmpty()) {
+        inputs.files(rootProject.file("src/jvmTest/resources")).withPropertyName("aoc2022_test_datadir")
+        environment("aoc2022_test_datadir", rootProject.file("src/jvmTest/resources"))
+    }
+}
+
+tasks.nativeTest {
+    if (providers.environmentVariable("aoc2022_test_datadir").orNull.isNullOrEmpty()) {
+        inputs.files(rootProject.file("src/jvmTest/resources")).withPropertyName("aoc2022_test_datadir")
+        environment.put("aoc2022_test_datadir", rootProject.file("src/jvmTest/resources").path)
+    }
 }
 
 val jmhJar by configurations.creating {
