@@ -20,6 +20,15 @@ tasks.run.configure {
     javaLauncher.set(graalvmJavaLauncher)
 }
 
+val agentRun by tasks.registering(JavaExec::class) {
+    javaLauncher.set(graalvmJavaLauncher)
+    mainClass.set(application.mainClass)
+    val main by sourceSets.getting
+    classpath(rootProject.file("src/jvmTest/resources"))
+    classpath(main.output.classesDirs, main.output.resourcesDir, main.runtimeClasspath)
+    environment("aoc2022_datadir", "")
+}
+
 tasks.test {
     javaLauncher.set(graalvmJavaLauncher)
 }
@@ -36,6 +45,13 @@ val jmhRun by tasks.registering(JavaExec::class) {
     args("-f", "0", "-r", "1", "-tu", "s", "-w", "1", "-rf", "json", "-rff", "/dev/null", "-wi", "0", "-i", "1")
 }
 
+val copyAgentRunMetadata by tasks.registering(Sync::class) {
+    destinationDir = File(buildDir, "generated/resources/runMetadata")
+    into("META-INF/native-image") {
+        from(files(AgentConfigurationFactory.getAgentOutputDirectoryForTask(layout, "agentRun")).builtBy(agentRun))
+    }
+}
+
 val copyJmhRunMetadata by tasks.registering(Sync::class) {
     destinationDir = File(buildDir, "generated/resources/jmhRunMetadata")
     into("META-INF/native-image") {
@@ -50,7 +66,7 @@ graalvmNative {
     binaries {
         getByName("main") {
             imageName.set(rootProject.name)
-            buildArgs.add("-H:IncludeResources=day.*\\.txt")
+            classpath.from(copyAgentRunMetadata)
         }
         create("jmh") {
             imageName.set("${rootProject.name}-jmh")

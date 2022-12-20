@@ -11,9 +11,11 @@ class Day15(lines: List<String>) {
         val y1 = it.substring(it.lastIndexOf("y=") + 2).toInt()
         x0 to y0 to (x1 to y1)
     }
+    private val isTestInput = inputs.all { (sensor, _) -> sensor.first in 0..20 && sensor.second in 0..20 }
 
     @Day.Part
-    fun part1(y: Int = 2000000): Int {
+    fun part1(): Int {
+        val y = if (isTestInput) 10 else 2000000
         val intervals = mutableListOf<IntRange>()
         val beacons = mutableSetOf<Int>()
         for ((sensor, beacon) in inputs) {
@@ -25,7 +27,8 @@ class Day15(lines: List<String>) {
     }
 
     @Day.Part
-    fun part2(size: Int = 4000000): Long = sequence {
+    fun part2(): Long = sequence {
+        val size = if (isTestInput) 20 else 4000000
         for (y in 0..size) {
             val intervals = mutableListOf<IntRange>()
             for ((sensor, beacon) in inputs) {

@@ -9,25 +9,11 @@ import kotlin.test.assertEquals
 class Day19Test {
     @Test
     fun part1() = runTest {
-        assertEquals(33, Day19(SAMPLE_INPUT).part1())
+        assertEquals(33, Day19(getTestInput(19)).part1())
     }
 
     @Test
     fun part2() = runTest(dispatchTimeoutMs = 120_000L) {
-        assertEquals(3472, Day19(SAMPLE_INPUT).part2())
-    }
-
-    companion object {
-        private val SAMPLE_INPUT = listOf(
-            "Blueprint 1: Each ore robot costs 4 ore. " +
-                "Each clay robot costs 2 ore. " +
-                "Each obsidian robot costs 3 ore and 14 clay. " +
-                "Each geode robot costs 2 ore and 7 obsidian.",
-            "Blueprint 2: " +
-                "Each ore robot costs 2 ore. " +
-                "Each clay robot costs 3 ore. " +
-                "Each obsidian robot costs 3 ore and 8 clay. " +
-                "Each geode robot costs 3 ore and 12 obsidian."
-        )
+        assertEquals(3472, Day19(getTestInput(19)).part2())
     }
 }

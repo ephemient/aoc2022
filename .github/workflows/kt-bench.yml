@@ -140,14 +140,14 @@ jobs:
           linuxX64Bench/classes/*.kexe config --list /dev/null descriptions
           descriptions=(descriptions/*.txt)
           for i in "${descriptions[@]}"; do
-            aoc2022_data=. linuxX64Bench/classes/*.kexe config --benchmark /dev/null "$i" "${i%.txt}.out"
+            aoc2022_datadir=. linuxX64Bench/classes/*.kexe config --benchmark /dev/null "$i" "${i%.txt}.out"
           done
           for ((i=0; i<${#descriptions[*]}; i++)); do
             [[ i -eq 0 ]] || echo
             printf '%s: ' "${descriptions[i]}"
             cat "${descriptions[i]%.txt}.out"
           done >results.txt
-          aoc2022_data=. linuxX64Bench/classes/*.kexe config --store-results /dev/null results.txt
+          aoc2022_datadir=. linuxX64Bench/classes/*.kexe config --store-results /dev/null results.txt
         env:
           TRACE: 0
       - name: Run Graal native-image benchmarks

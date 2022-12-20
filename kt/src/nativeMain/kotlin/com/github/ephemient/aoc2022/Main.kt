@@ -5,7 +5,7 @@ import platform.posix.*
 
 @OptIn(UnsafeNumber::class)
 actual fun getInput(day: Int): List<String> {
-    val dataDir = checkNotNull(getenv("aoc2022_data")) { "missing \$aoc2022_data" }.toKString()
+    val dataDir = checkNotNull(getenv("aoc2022_datadir")?.toKString()?.ifEmpty { null }) { "missing \$aoc2022_datadir" }
     var offset = 0
     var buffer = ByteArray(2 * BUFSIZ)
     val fd = open("$dataDir/day$day.txt", O_RDONLY)
@@ -51,5 +51,5 @@ actual fun getInput(day: Int): List<String> {
 }
 
 actual fun trace(message: String) {
-    if (getenv("TRACE")?.get(0) != '0'.code.toByte()) fprintf(stderr, message)
+    if (getenv("TRACE")?.get(0) != '0'.code.toByte()) fputs("$message\n", stderr)
 }

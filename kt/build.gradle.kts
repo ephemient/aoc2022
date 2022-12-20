@@ -7,6 +7,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
 
 plugins {
     kotlin("multiplatform")
@@ -57,6 +58,12 @@ kotlin {
                 entryPoint("com.github.ephemient.aoc2022.main")
             }
             compilations.create("bench")
+            testRuns.all {
+                tasks.named<KotlinNativeHostTest>("${this@targetFromPreset.name}${name.capitalized()}") {
+                    inputs.files("src/jvmTest/resources").withPropertyName("aoc2022_test_datadir")
+                    environment("aoc2022_test_datadir", file("src/jvmTest/resources"))
+                }
+            }
             project.dependencies.add("ksp${name.capitalized()}", projects.processor)
         }
     }

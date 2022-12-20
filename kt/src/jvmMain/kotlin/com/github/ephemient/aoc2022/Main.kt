@@ -8,7 +8,7 @@ import java.io.IOException
 actual fun getInput(day: Int): List<String> {
     val fileName = "day$day.txt"
     val inputStream = try {
-        System.getenv("aoc2022_datadir")?.let { File(File(it), fileName).inputStream() }
+        System.getenv("aoc2022_datadir")?.ifEmpty { null }?.let { File(File(it), fileName).inputStream() }
     } catch (_: IOException) {
         null
     } ?: checkNotNull(ClassLoader.getSystemClassLoader().getResourceAsStream(fileName)) { "No data for day $day" }
