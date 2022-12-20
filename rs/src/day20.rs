@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-
 use std::num::ParseIntError;
 
 fn parse<'a, I, S>(lines: I) -> Result<Vec<(usize, isize)>, ParseIntError>
