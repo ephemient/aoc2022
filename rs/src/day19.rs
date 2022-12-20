@@ -35,6 +35,15 @@ struct State<'a> {
 }
 
 fn geodes(blueprint: &Blueprint, time: usize) -> usize {
+    let mut max_values = BTreeMap::new();
+    for costs in blueprint.values() {
+        for (&material, &cost) in costs {
+            max_values
+                .entry(material)
+                .and_modify(|e| *e = max(*e, cost))
+                .or_insert(cost);
+        }
+    }
     let mut best = 0;
     let mut queue = vec![State {
         robots: [("ore", 1)].into(),
@@ -83,6 +92,13 @@ fn geodes(blueprint: &Blueprint, time: usize) -> usize {
             materials.get("geode").unwrap_or(&0) + robots.get("geode").unwrap_or(&0) * time;
         best = max(best, estimate);
         for (&robot, costs) in blueprint {
+            if max_values
+                .get(robot)
+                .filter(|&max_value| robots.get(robot).unwrap_or(&0) >= max_value)
+                .is_some()
+            {
+                continue;
+            }
             let delta = costs
                 .iter()
                 .filter_map(|(&material, &cost)| -> Option<usize> {
@@ -130,11 +146,7 @@ where
         .filter_map(|line| parse(line.as_ref()))
         .collect::<Vec<_>>()
         .into_par_iter()
-        .map(|(id, blueprint)| {
-            let geodes = geodes(&blueprint, 24);
-            eprintln!("{:?}", (id, geodes));
-            id * geodes
-        })
+        .map(|(id, blueprint)| id * geodes(&blueprint, 24))
         .sum()
 }
 
@@ -149,11 +161,7 @@ where
         .filter_map(|line| parse(line.as_ref()))
         .collect::<Vec<_>>()
         .into_par_iter()
-        .map(|(id, blueprint)| {
-            let geodes = geodes(&blueprint, 32);
-            eprintln!("{:?}", (id, geodes));
-            geodes
-        })
+        .map(|(_, blueprint)| geodes(&blueprint, 32))
         .product()
 }
 
