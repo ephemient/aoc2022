@@ -123,6 +123,8 @@ jobs:
           outputTimeUnit:SECONDS
           EOF
           java -cp jvmBench/jars/*.jar kotlinx.benchmark.jvm.JvmBenchmarkRunnerKt config
+        env:
+          TRACE: 0
       - name: Run Kotlin/Native benchmarks
         run: |
           cat >config <<EOF
@@ -146,10 +148,14 @@ jobs:
             cat "${descriptions[i]%.txt}.out"
           done >results.txt
           aoc2022_data=. linuxX64Bench/classes/*.kexe config --store-results /dev/null results.txt
+        env:
+          TRACE: 0
       - name: Run Graal native-image benchmarks
         run: |
           chmod +x native-image/*
           native-image/* -f 0 -r 1 -w 1 -wi 0 -rf json -rff graalBench.json
+        env:
+          TRACE: 0
       - name: Create provided.js
         run: |
           shopt -s failglob

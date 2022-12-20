@@ -21,7 +21,7 @@ class Day19(lines: List<String>) {
     suspend fun part1(): Int = withContext(Dispatchers.Default) {
         blueprints.map { (id, blueprint) ->
             async {
-                id * geodes(blueprint, 24).also { println("($id, $it)") }
+                id * geodes(blueprint, 24).also { trace("($id, $it)") }
             }
         }.sumOf { it.await() }
     }
@@ -30,7 +30,7 @@ class Day19(lines: List<String>) {
     suspend fun part2(): Int = withContext(Dispatchers.Default) {
         blueprints.take(3).map { (id, blueprint) ->
             async {
-                geodes(blueprint, 32).also { println("($id, $it)") }
+                geodes(blueprint, 32).also { trace("($id, $it)") }
             }
         }.fold(1) { acc, deferred -> acc * deferred.await() }
     }
@@ -50,7 +50,13 @@ class Day19(lines: List<String>) {
 
         private fun <T> Map<T, Int>.get0(key: T): Int = getOrElse(key) { 0 }
 
+        @Suppress("CyclomaticComplexMethod")
         private fun geodes(blueprint: Map<String, Map<String, Int>>, time: Int): Int {
+            val maxValues = buildMap {
+                for (costs in blueprint.values) {
+                    for ((material, cost) in costs) this[material] = maxOf(this.get0(material), cost)
+                }
+            }
             var best = 0
             val queue = mutableListOf(State(mapOf("ore" to 1), emptyMap(), time))
             while (queue.isNotEmpty()) {
@@ -58,6 +64,8 @@ class Day19(lines: List<String>) {
                 if (potential(blueprint, state) < best) continue
                 if (state.estimate > best) best = state.estimate
                 for ((robot, costs) in blueprint) {
+                    val maxValue = maxValues[robot]
+                    if (maxValue != null && state.robots.get0(robot) >= maxValue) continue
                     val delta = blueprint.keys.maxOf { type ->
                         val demand = costs.get0(type) - state.resources.get0(type)
                         if (demand <= 0) {

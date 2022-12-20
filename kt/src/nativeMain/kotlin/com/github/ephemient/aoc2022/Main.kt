@@ -49,3 +49,7 @@ actual fun getInput(day: Int): List<String> {
         close(fd)
     }
 }
+
+actual fun trace(message: String) {
+    if (getenv("TRACE")?.get(0) != '0'.code.toByte()) fprintf(stderr, message)
+}

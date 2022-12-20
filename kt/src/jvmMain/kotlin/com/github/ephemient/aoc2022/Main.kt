@@ -14,3 +14,11 @@ actual fun getInput(day: Int): List<String> {
     } ?: checkNotNull(ClassLoader.getSystemClassLoader().getResourceAsStream(fileName)) { "No data for day $day" }
     return inputStream.bufferedReader().use { it.readLines() }
 }
+
+private val trace by lazy(LazyThreadSafetyMode.NONE) {
+    System.getenv("TRACE")?.startsWith('0') != true
+}
+
+actual fun trace(message: String) {
+    if (trace) System.err.println(message)
+}
