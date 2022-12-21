@@ -73,6 +73,7 @@ jobs:
           version: latest
           java-version: 17
           components: native-image
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: gradle
       - uses: gradle/gradle-build-action@v2
         with:
