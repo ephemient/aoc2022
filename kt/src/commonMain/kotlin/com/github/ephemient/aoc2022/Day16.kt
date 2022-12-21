@@ -86,51 +86,36 @@ class Day16(lines: List<String>) {
             }
             if (movesByTime.values.all { movesByAgent -> movesByAgent.all { it.isEmpty() } }) continue
             for ((d, movesByAgent) in movesByTime) {
-                for (bitmask in 1 until 1.shl(agents)) {
-                    run { // https://youtrack.jetbrains.com/issue/KT-1436
-                        val indices = IntArray(agents) { i ->
-                            if (bitmask and 1.shl(i) != 0) {
-                                if (movesByAgent[i].isEmpty()) return@run
-                                0
+                val indices = IntArray(agents) { -1 }
+                while (
+                    indices.withIndex().any { (i, j) ->
+                        (if (j < movesByAgent[i].lastIndex) j + 1 else -1).also { indices[i] = it } >= 0
+                    }
+                ) {
+                    val allUnique: Boolean
+                    val valves = buildSet {
+                        allUnique = indices.withIndex().all { (i, j) -> j < 0 || add(movesByAgent[i][j]) }
+                    }
+                    if (allUnique) {
+                        val rooms = indices.mapIndexed { i, j ->
+                            if (j >= 0) {
+                                IndexedValue(0, movesByAgent[i][j])
                             } else {
-                                -1
+                                val (age, room) = state.rooms[i]
+                                IndexedValue(age + d + 1, room)
                             }
+                        }.sortedWith(compareBy({ it.value }, { it.index }))
+                        val rate = indices.withIndex().sumOf { (i, j) ->
+                            if (j >= 0) graph.getValue(movesByAgent[i][j]).index else 0
                         }
-                        do {
-                            var allUnique = true
-                            val valves = buildSet {
-                                indices.forEachIndexed { i, j ->
-                                    if (j >= 0) allUnique = add(movesByAgent[i][j]) && allUnique
-                                }
-                            }
-                            if (allUnique) {
-                                val rooms = indices.mapIndexed { i, j ->
-                                    if (j >= 0) {
-                                        IndexedValue(0, movesByAgent[i][j])
-                                    } else {
-                                        val (age, room) = state.rooms[i]
-                                        IndexedValue(age + d + 1, room)
-                                    }
-                                }.sortedWith(compareBy({ it.value }, { it.index }))
-                                val rate = indices.withIndex().sumOf { (i, j) ->
-                                    if (j >= 0) graph.getValue(movesByAgent[i][j]).index else 0
-                                }
-                                val newState = State(
-                                    rooms = rooms,
-                                    valves = state.valves - valves,
-                                    flow = state.flow + rate,
-                                    total = state.total + state.flow * (d + 1),
-                                    timeRemaining = state.timeRemaining - d - 1,
-                                )
-                                queue.add(IndexedValue(estimate + rate * newState.timeRemaining, newState))
-                            }
-                            val allIsAtEnd = indices.withIndex().all { (i, j) ->
-                                if (j < 0) return@all true
-                                val isAtEnd = j == movesByAgent[i].lastIndex
-                                indices[i] = if (isAtEnd) 0 else j + 1
-                                isAtEnd
-                            }
-                        } while (!allIsAtEnd)
+                        val newState = State(
+                            rooms = rooms,
+                            valves = state.valves - valves,
+                            flow = state.flow + rate,
+                            total = state.total + state.flow * (d + 1),
+                            timeRemaining = state.timeRemaining - d - 1,
+                        )
+                        queue.add(IndexedValue(estimate + rate * newState.timeRemaining, newState))
                     }
                 }
             }
