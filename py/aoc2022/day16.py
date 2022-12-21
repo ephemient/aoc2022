@@ -4,6 +4,7 @@ Day 16: Proboscidea Volcanium
 
 import heapq
 import itertools
+import math
 import re
 from collections import defaultdict
 from dataclasses import dataclass
@@ -38,7 +39,7 @@ def _parse(lines):
 
 
 def _distances(adj):
-    keys, distances = set(), defaultdict(lambda: float("inf"))
+    keys, distances = set(), defaultdict(lambda: math.inf)
     for src, dsts in adj:
         keys.add(src)
         distances[src, src] = 0
