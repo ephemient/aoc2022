@@ -31,6 +31,7 @@ data-files:
   , day18.txt
   , day19.txt
   , day20.txt
+  , day21.txt
 
 extra-source-files:
     README.md
@@ -58,6 +59,7 @@ library
       , Day18
       , Day19
       , Day20
+      , Day21
     build-depends:
         array ^>=0.5.4.0
       , base ^>=4.16.0.0
@@ -120,6 +122,7 @@ test-suite aoc2022-test
       , Day18Spec
       , Day19Spec
       , Day20Spec
+      , Day21Spec
     hs-source-dirs:   test
     default-language: GHC2021
     build-tool-depends:
