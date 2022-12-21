@@ -2,6 +2,7 @@ package com.github.ephemient.aoc2022
 
 import kotlinx.cinterop.*
 import platform.posix.*
+import kotlin.test.Ignore
 
 actual fun getTestInput(day: Int, extra: String): List<String> {
     val dataDir = checkNotNull(
@@ -39,3 +40,5 @@ actual fun getTestInput(day: Int, extra: String): List<String> {
         fclose(file)
     }
 }
+
+actual typealias SlowTest = Ignore

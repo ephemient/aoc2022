@@ -13,7 +13,8 @@ class Day19Test {
     }
 
     @Test
-    fun part2() = runTest(dispatchTimeoutMs = 180_000L) {
+    @SlowTest
+    fun part2() = runTest {
         assertEquals(3472, Day19(getTestInput(19)).part2())
     }
 }
