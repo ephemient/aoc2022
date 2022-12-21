@@ -20,44 +20,37 @@ class Day21(lines: List<String>) {
     }
 
     @Day.Part
-    fun part1(): Long {
-        val cache = mutableMapOf<String, Long>()
-        return DeepRecursiveFunction<String, Long> { name ->
-            cache.getOrPut(name) {
-                when (val expr = monkeys.getValue(name)) {
-                    is Expr.Literal -> expr.value.toLong()
-                    is Expr.Binary -> when (expr.op) {
-                        Operation.Add -> callRecursive(expr.lhs) + callRecursive(expr.rhs)
-                        Operation.Subtract -> callRecursive(expr.lhs) - callRecursive(expr.rhs)
-                        Operation.Multiply -> callRecursive(expr.lhs) * callRecursive(expr.rhs)
-                        Operation.Divide -> callRecursive(expr.lhs) / callRecursive(expr.rhs)
-                    }
-                }
+    fun part1(): Long = DeepRecursiveFunction<String, Long> { name ->
+        when (val expr = monkeys.getValue(name)) {
+            is Expr.Literal -> expr.value.toLong()
+            is Expr.Binary -> when (expr.op) {
+                Operation.Add -> callRecursive(expr.lhs) + callRecursive(expr.rhs)
+                Operation.Subtract -> callRecursive(expr.lhs) - callRecursive(expr.rhs)
+                Operation.Multiply -> callRecursive(expr.lhs) * callRecursive(expr.rhs)
+                Operation.Divide -> callRecursive(expr.lhs) / callRecursive(expr.rhs)
             }
-        }("root")
-    }
+        }
+    }("root")
 
     @Day.Part
     fun part2(): Long {
         val (_, lhs, rhs) = monkeys.getValue("root") as Expr.Binary
-        val cache = mutableMapOf("humn" to (Rational(1) to Rational(0)))
         val eval = DeepRecursiveFunction<String, Pair<Rational, Rational>> { name ->
-            cache.getOrPut(name) {
-                when (val expr = monkeys.getValue(name)) {
-                    is Expr.Literal -> Rational(0) to Rational(expr.value.toLong())
-                    is Expr.Binary -> {
-                        val (a, b) = callRecursive(expr.lhs)
-                        val (c, d) = callRecursive(expr.rhs)
-                        when (expr.op) {
-                            Operation.Add -> a + c to b + d
-                            Operation.Subtract -> a - c to b - d
-                            Operation.Multiply -> when {
-                                a.numerator == 0L -> b * c to b * d
-                                c.numerator == 0L -> a * d to b * d
-                                else -> TODO()
-                            }
-                            Operation.Divide -> if (c.numerator == 0L) a / d to b / d else TODO()
+            if (name == "humn") return@DeepRecursiveFunction Rational(1) to Rational(0)
+            when (val expr = monkeys.getValue(name)) {
+                is Expr.Literal -> Rational(0) to Rational(expr.value.toLong())
+                is Expr.Binary -> {
+                    val (a, b) = callRecursive(expr.lhs)
+                    val (c, d) = callRecursive(expr.rhs)
+                    when (expr.op) {
+                        Operation.Add -> a + c to b + d
+                        Operation.Subtract -> a - c to b - d
+                        Operation.Multiply -> when {
+                            a.numerator == 0L -> b * c to b * d
+                            c.numerator == 0L -> a * d to b * d
+                            else -> TODO()
                         }
+                        Operation.Divide -> if (c.numerator == 0L) a / d to b / d else TODO()
                     }
                 }
             }
