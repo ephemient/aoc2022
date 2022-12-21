@@ -6,7 +6,7 @@ Description:    <https://adventofcode.com/2022/day/20 Day 20: Grove Positioning 
 module Day20 (day20a, day20b) where
 
 import Common (readEntire)
-import Control.Monad (forM_)
+import Control.Monad (forM_, replicateM_)
 import Control.Monad.ST (runST)
 import Data.Bool (bool)
 import Data.Text (Text)
@@ -51,6 +51,6 @@ day20b input = do
     nums <- V.map (* 811589153) <$> parse input
     pure $ runST $ do
     v <- V.thaw $ UV.zip (V.enumFromN 0 $ V.length nums) nums
-    mapM_ (const $ mix v) [1..10]
+    replicateM_ 10 $ mix v
     Just i <- mvFindIndex ((== 0) . snd) v
     sum <$> sequence [snd <$> MV.read v ((i + x) `mod` MV.length v) | x <- [1000, 2000, 3000]]
