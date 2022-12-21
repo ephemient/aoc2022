@@ -30,6 +30,9 @@ val jvmResources by tasks.registering(Sync::class) {
 kotlin {
     jvm {
         compilations.create("bench")
+        compilations.all {
+            kotlinOptions.freeCompilerArgs += "-Xassertions=jvm"
+        }
         val jvmTestFixtures by configurations.creating {
             val parent = configurations.getByName("jvmTestRuntimeClasspath")
             extendsFrom(parent)

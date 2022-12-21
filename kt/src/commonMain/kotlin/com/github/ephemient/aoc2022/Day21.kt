@@ -1,7 +1,5 @@
 package com.github.ephemient.aoc2022
 
-import kotlin.math.abs
-
 @Day
 class Day21(lines: List<String>) {
     private val monkeys = buildMap {
@@ -83,37 +81,42 @@ class Day21(lines: List<String>) {
     private data class Rational(val numerator: Long, val denominator: Long = 1) {
         init {
             require(denominator > 0)
+            assert(gcd(numerator, denominator) == 1L)
         }
 
         operator fun plus(other: Rational): Rational {
-            val denominator = this.denominator * other.denominator / gcd(this.denominator, other.denominator)
-            val numerator = this.numerator * (denominator / this.denominator) +
-                other.numerator * (denominator / other.denominator)
-            val gcd = abs(gcd(numerator, denominator))
-            return Rational(numerator / gcd, denominator / gcd)
+            val gcd1 = gcd(this.denominator, other.denominator)
+            val multiplier = this.denominator / gcd1
+            val denominator = multiplier * other.denominator
+            val numerator = this.numerator * (other.denominator / gcd1) + other.numerator * multiplier
+            val gcd2 = gcd(numerator, denominator)
+            return Rational(numerator / gcd2, denominator / gcd2)
         }
 
         operator fun minus(other: Rational): Rational {
-            val denominator = this.denominator * other.denominator / gcd(this.denominator, other.denominator)
-            val numerator = this.numerator * (denominator / this.denominator) -
-                other.numerator * (denominator / other.denominator)
-            val gcd = abs(gcd(numerator, denominator))
-            return Rational(numerator / gcd, denominator / gcd)
+            val gcd1 = gcd(this.denominator, other.denominator)
+            val multiplier = this.denominator / gcd1
+            val denominator = multiplier * other.denominator
+            val numerator = this.numerator * (other.denominator / gcd1) - other.numerator * multiplier
+            val gcd2 = gcd(numerator, denominator)
+            return Rational(numerator / gcd2, denominator / gcd2)
         }
 
         operator fun times(other: Rational): Rational {
-            val numerator = this.numerator * other.numerator
-            val denominator = this.denominator * other.denominator
-            val gcd = abs(gcd(numerator, denominator))
-            return Rational(numerator / gcd, denominator / gcd)
+            val gcd1 = gcd(this.numerator, other.denominator)
+            val gcd2 = gcd(other.numerator, this.denominator)
+            val numerator = (this.numerator / gcd1) * (other.numerator / gcd2)
+            val denominator = (this.denominator / gcd2) * (other.denominator / gcd1)
+            return Rational(numerator, denominator)
         }
 
         operator fun div(other: Rational): Rational {
             require(other.numerator != 0L)
-            val numerator = this.numerator * other.denominator
-            val denominator = this.denominator * other.numerator
-            val gcd = gcd(numerator, denominator).let { if (it < 0 != denominator < 0) -it else it }
-            return Rational(numerator / gcd, denominator / gcd)
+            val gcd1 = gcd(this.numerator, other.numerator)
+            val gcd2 = gcd(other.denominator, this.denominator)
+            val numerator = (this.numerator / gcd1) * (other.denominator / gcd2)
+            val denominator = (this.denominator / gcd2) * (other.numerator / gcd1)
+            return Rational(numerator, denominator)
         }
     }
 
@@ -121,10 +124,8 @@ class Day21(lines: List<String>) {
         private fun gcd(a: Long, b: Long): Long {
             var x = a
             var y = b
-            while (y != 0L) {
-                x = y.also { y = x % y }
-            }
-            return x
+            while (y != 0L) x = y.also { y = x % y }
+            return if (x < 0 != b < 0) -x else x
         }
     }
 }
