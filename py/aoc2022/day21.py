@@ -66,36 +66,37 @@ def part2(lines):
     definitions = _parse(lines)
 
     def evaluate(name):
+        # pylint: disable=too-many-return-statements
         if name == "humn":
             return Fraction(1), Fraction(0)
         match definitions[name]:
             case value if isinstance(value, Number):
                 return Fraction(0), Fraction(value)
             case (lhs, "+", rhs):
-                a, b = evaluate(lhs)
-                c, d = evaluate(rhs)
-                return a + c, b + d
+                slope1, intercept1 = evaluate(lhs)
+                slope2, intercept2 = evaluate(rhs)
+                return slope1 + slope2, intercept1 + intercept2
             case (lhs, "-", rhs):
-                a, b = evaluate(lhs)
-                c, d = evaluate(rhs)
-                return a - c, b - d
+                slope1, intercept1 = evaluate(lhs)
+                slope2, intercept2 = evaluate(rhs)
+                return slope1 - slope2, intercept1 - intercept2
             case (lhs, "*", rhs):
-                a, b = evaluate(lhs)
-                c, d = evaluate(rhs)
-                if not a:
-                    return b * c, b * d
-                if not c:
-                    return a * d, b * d
+                slope1, intercept1 = evaluate(lhs)
+                slope2, intercept2 = evaluate(rhs)
+                if not slope1:
+                    return intercept1 * slope2, intercept1 * intercept2
+                if not slope2:
+                    return slope1 * intercept2, intercept1 * intercept2
             case (lhs, "/", rhs):
-                a, b = evaluate(lhs)
-                c, d = evaluate(rhs)
-                if not c:
-                    return a / d, b / d
+                slope1, intercept1 = evaluate(lhs)
+                slope2, intercept2 = evaluate(rhs)
+                if not slope2:
+                    return slope1 / intercept2, intercept1 / intercept2
 
     lhs, _, rhs = definitions["root"]
-    m, b = evaluate(lhs)
-    n, c = evaluate(rhs)
-    x = (c - b) / (m - n)
+    slope1, intercept1 = evaluate(lhs)
+    slope2, intercept2 = evaluate(rhs)
+    x = (intercept2 - intercept1) / (slope1 - slope2)
     assert x.denominator == 1
     return int(x)
 
