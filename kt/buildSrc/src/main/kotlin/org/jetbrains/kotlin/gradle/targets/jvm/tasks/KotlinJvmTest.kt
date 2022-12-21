@@ -1,4 +1,4 @@
-// Copied from https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/jvm/tasks/KotlinJvmTest.kt
+// Copied from https://github.com/JetBrains/kotlin/blob/v1.7.21/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/jvm/tasks/KotlinJvmTest.kt
 // which needs to be recompiled with a newer Gradle API to address https://youtrack.jetbrains.com/issue/KT-54634
 /*
  * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
