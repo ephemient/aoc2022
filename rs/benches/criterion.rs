@@ -6,6 +6,7 @@ use aoc2022::{
     day20, day21, day3, day4, day5, day6, day7, day8, day9,
 };
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use gag::Gag;
 
 build_const!("aoc2022");
 
@@ -80,10 +81,12 @@ fn aoc2022_bench(c: &mut Criterion) {
         b.iter(|| day15::part2(4000000, black_box(DAY15)))
     });
     g.finish();
+    let gag = Gag::stderr();
     let mut g = c.benchmark_group("day 16");
     g.bench_function("part 1", |b| b.iter(|| day16::part1(black_box(DAY16))));
     g.bench_function("part 2", |b| b.iter(|| day16::part2(black_box(DAY16))));
     g.finish();
+    drop(gag);
     let mut g = c.benchmark_group("day 17");
     g.bench_function("part 1", |b| b.iter(|| day17::part1(black_box(DAY17))));
     g.bench_function("part 2", |b| b.iter(|| day17::part2(black_box(DAY17))));

@@ -76,12 +76,8 @@ where
             }
             self.best_estimate = max(self.best_estimate, Some(r));
             let (potential, nexts) = (self.next)(&t);
-            if let Some(potential) = potential {
-                if let Some(best_estimate) = self.best_estimate {
-                    if potential < best_estimate {
-                        continue;
-                    }
-                }
+            if potential.is_some() && potential < self.best_estimate {
+                continue;
             }
             for next in nexts {
                 if !self.seen.contains(&next.1) {
@@ -147,7 +143,7 @@ where
                                 .get(&(room, valve))
                                 .and_then(|d| d.checked_sub(age))
                                 .filter(|&d| d < state.time)
-                                .map(|d| graph[room].0 * (state.time - d - 1))
+                                .map(|d| graph[valve].0 * (state.time - d - 1))
                         })
                         .max()
                 })
@@ -162,12 +158,6 @@ where
                 moves.entry(d).or_insert_with(|| [(); N].map(|_| vec![]))[i].push(valve);
             }
         }
-        // if moves
-        //     .iter()
-        //     .all(|(_, moves)| moves.iter().all(|moves| moves.is_empty()))
-        // {
-        //     return (None, vec![]);
-        // }
         let mut options = vec![];
         for (d, moves) in moves {
             let mut indices = [None; N];
