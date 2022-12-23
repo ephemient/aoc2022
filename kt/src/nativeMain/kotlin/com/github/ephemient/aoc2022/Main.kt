@@ -50,6 +50,14 @@ actual fun getInput(day: Int): List<String> {
     }
 }
 
+actual inline fun assert(condition: () -> Boolean) {
+    assert(condition())
+}
+
+actual inline fun assert(condition: () -> Boolean, lazyMessage: () -> Any) {
+    assert(condition(), lazyMessage)
+}
+
 actual fun trace(message: String) {
     if (getenv("TRACE")?.get(0) != '0'.code.toByte()) fputs("$message\n", stderr)
 }

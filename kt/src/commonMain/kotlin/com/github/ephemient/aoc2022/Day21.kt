@@ -74,7 +74,7 @@ class Day21(lines: List<String>) {
     private data class Rational(val numerator: Long, val denominator: Long = 1) {
         init {
             require(denominator > 0)
-            assert(gcd(numerator, denominator) == 1L)
+            assert { gcd(numerator, denominator) == 1L }
         }
 
         operator fun plus(other: Rational): Rational {

@@ -19,6 +19,14 @@ private val trace by lazy(LazyThreadSafetyMode.NONE) {
     System.getenv("TRACE")?.startsWith('0') != true
 }
 
+actual inline fun assert(condition: () -> Boolean) {
+    assert(condition())
+}
+
+actual inline fun assert(condition: () -> Boolean, lazyMessage: () -> Any) {
+    assert(condition(), lazyMessage)
+}
+
 actual fun trace(message: String) {
     if (trace) System.err.println(message)
 }
