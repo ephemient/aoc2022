@@ -48,15 +48,12 @@ day21b input = do
             lhs :/ rhs -> (lhs, rhs)
         monkeys' = Map.insert "humn" (1, 0) $ eval <$> monkeys
         eval (Literal a) = (0, a % 1)
-        eval (x :+ y) = (monkeys' Map.! x) +: (monkeys' Map.! y)
-        eval (x :- y) = (monkeys' Map.! x) -: (monkeys' Map.! y)
-        eval (x :* y) = (monkeys' Map.! x) *: (monkeys' Map.! y)
-        eval (x :/ y) = (monkeys' Map.! x) /: (monkeys' Map.! y)
-        (a, b) +: (c, d) = (a + c, b + d)
-        (a, b) -: (c, d) = (a - c, b - d)
-        (0, b) *: (c, d) = (b * c, b * d)
-        (a, b) *: (0, d) = (a * d, b * d)
-        (a, b) /: (0, d) = (a / d, b / d)
+        eval (x :+ y) | (a, b) <- monkeys' Map.! x, (c, d) <- monkeys' Map.! y = (a + c, b + d)
+        eval (x :- y) | (a, b) <- monkeys' Map.! x, (c, d) <- monkeys' Map.! y = (a - c, b - d)
+        eval (x :* y)
+          | (0, b) <- monkeys' Map.! x, (c, d) <- monkeys' Map.! y = (b * c, b * d)
+          | (a, b) <- monkeys' Map.! x, (0, d) <- monkeys' Map.! y = (a * d, b * d)
+        eval (x :/ y) | (a, b) <- monkeys' Map.! x, (0, d) <- monkeys' Map.! y = (a / d, b / d)
         (m, b) = monkeys' Map.! lhs
         (n, c) = monkeys' Map.! rhs
         x = (c - b) / (m - n)

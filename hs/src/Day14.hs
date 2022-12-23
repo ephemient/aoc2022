@@ -6,6 +6,7 @@ Description:    <https://adventofcode.com/2022/day/14 Day 14: Regolith Reservoir
 module Day14 (day14) where
 
 import Common (readEntire)
+import Control.Arrow ((&&&), (***))
 import Control.Monad (forM_, when)
 import Control.Monad.ST (ST, runST)
 import Data.Array.MArray (MArray, newArray, readArray, writeArray)
@@ -40,8 +41,8 @@ parse input = do
         ]
       | line <- T.lines input
       ]
-    f (x, y) = (Min x, Max x, Min y, Max y)
-    (Min minX, Max maxX, Min minY, Max maxY) = foldMap f $ concat segments
+    ((Min minX, Max maxX), (Min minY, Max maxY)) =
+        foldMap ((Min &&& Max) *** (Min &&& Max)) $ concat segments
 
 fill :: (MArray a Bool (ST s), Ix i, Num i, Show i) => a (i, i) Bool -> i -> ST s (Int, Int)
 fill blocks maxY = do

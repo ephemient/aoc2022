@@ -4,6 +4,7 @@ Description:    <https://adventofcode.com/2022/day/23 Day 23: Unstable Diffusion
 -}
 module Day23 (day23a, day23b) where
 
+import Control.Arrow ((&&&), (***))
 import Data.List (findIndex, scanl', tails)
 import qualified Data.Map as Map (elems, filter, fromListWith, keysSet)
 import Data.Maybe (fromJust)
@@ -50,8 +51,8 @@ parse input = Set.fromList
 day23a :: Text -> Int
 day23a input = (maxX - minX + 1) * (maxY - minY + 1) - Set.size state where
     state = scanl' step (parse input) dirs !! 10
-    (Min minX, Max maxX, Min minY, Max maxY) = mconcat
-        [(Min x, Max x, Min y, Max y) | (x, y) <- Set.toList state]
+    ((Min minX, Max maxX), (Min minY, Max maxY)) =
+        foldMap ((Min &&& Max) *** (Min &&& Max)) state
 
 day23b :: Text -> Int
 day23b input = fromJust (findIndex id . zipWith (==) states $ drop 1 states) + 1 where

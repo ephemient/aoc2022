@@ -4,6 +4,7 @@ Description:    <https://adventofcode.com/2022/day/18 Day 18: Boiling Boulders>
 -}
 module Day18 (day18a, day18b) where
 
+import Common (count)
 import Control.Arrow ((&&&))
 import Data.Ix (inRange)
 import Data.List (foldl')
@@ -17,12 +18,12 @@ neighbors (x, y, z) =
     [(x - 1, y, z), (x + 1, y, z), (x, y - 1, z), (x, y + 1, z), (x, y, z - 1), (x, y, z + 1)]
 
 day18a :: Text -> Int
-day18a input = length . filter (`Set.notMember` points') $ points >>= neighbors where
+day18a input = count (`Set.notMember` points') $ points >>= neighbors where
     points = read @(Int, Int, Int) . T.unpack . T.cons '(' . flip T.snoc ')' <$> T.lines input
     points' = Set.fromList points
 
 day18b :: Text -> Int
-day18b input = length . filter (`Set.member` outside) $ points >>= neighbors where
+day18b input = count (`Set.member` outside) $ points >>= neighbors where
     points = read @(Int, Int, Int) . T.unpack . T.cons '(' . flip T.snoc ')' <$> T.lines input
     points' = Set.fromList points
     ((Min minX, Max maxX), (Min minY, Max maxY), (Min minZ, Max maxZ)) = mconcat
