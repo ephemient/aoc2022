@@ -160,4 +160,8 @@ def part2(lines):
 parts = (part1, part2)
 
 if __name__ == "__main__":
-    print(part1(SAMPLE_INPUT))
+    import fileinput
+
+    _lines = list(fileinput.input())
+    print(part1(_lines))
+    print(part2(_lines))
