@@ -20,29 +20,18 @@ class Day24(private val lines: List<String>) {
 
     private fun search(start: IntPair, end: IntPair, startTime: Int = 0): Int {
         val (endX, endY) = end
+        val seen = mutableSetOf(IndexedValue(startTime, start))
         val queue = PriorityQueue(compareBy(IndexedValue<IndexedValue<IntPair>>::index))
         queue.add(IndexedValue(0, IndexedValue(startTime, start)))
-        val seen = mutableSetOf<IndexedValue<IntPair>>()
         while (!queue.isEmpty()) {
             val entry = queue.remove().value
-            if (!seen.add(entry)) continue
             val (time, position) = entry
             if (position == end) return time
             val (x, y) = position
-            if (isFree(x, y, time + 1)) {
-                queue.add(IndexedValue(time + abs(x - endX) + abs(y - endY), IndexedValue(time + 1, x to y)))
-            }
-            if (isFree(x - 1, y, time + 1)) {
-                queue.add(IndexedValue(time + abs(x - 1 - endX) + abs(y - endY), IndexedValue(time + 1, x - 1 to y)))
-            }
-            if (isFree(x + 1, y, time + 1)) {
-                queue.add(IndexedValue(time + abs(x + 1 - endX) + abs(y - endY), IndexedValue(time + 1, x + 1 to y)))
-            }
-            if (isFree(x, y - 1, time + 1)) {
-                queue.add(IndexedValue(time + abs(x - endX) + abs(y - 1 - endY), IndexedValue(time + 1, x to y - 1)))
-            }
-            if (isFree(x, y + 1, time + 1)) {
-                queue.add(IndexedValue(time + abs(x - endX) + abs(y + 1 - endY), IndexedValue(time + 1, x to y + 1)))
+            for ((x2, y2) in arrayOf(x - 1 to y, x to y - 1, x to y, x to y + 1, x + 1 to y)) {
+                if (!isFree(x2, y2, time + 1)) continue
+                val state = IndexedValue(time + 1, x2 to y2)
+                if (seen.add(state)) queue.add(IndexedValue(time + abs(x2 - endX) + abs(y2 - endY), state))
             }
         }
         throw NoSuchElementException()
