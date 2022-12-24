@@ -8,15 +8,15 @@ class Day24(private val lines: List<String>) {
     private val end = lines.last().lastIndexOf('.') to lines.lastIndex
 
     @Suppress("ComplexCondition")
-    private fun isFree(x: Int, y: Int, time: Int): Boolean {
+    private fun isFree(x: Int, y: Int, time: Int): Boolean =
         if (x <= 0 || y <= 0 || y >= lines.lastIndex || x >= lines.getOrElse(y) { "" }.lastIndex) {
-            return (lines.getOrNull(y)?.getOrNull(x) ?: '#') == '.'
+            lines.getOrNull(y)?.getOrNull(x) == '.'
+        } else {
+            lines[y][(x - 1 + time).mod(lines[y].length - 2) + 1] != '<' &&
+                lines[y][(x - 1 - time).mod(lines[y].length - 2) + 1] != '>' &&
+                lines[(y - 1 + time).mod(lines.size - 2) + 1][x] != '^' &&
+                lines[(y - 1 - time).mod(lines.size - 2) + 1][x] != 'v'
         }
-        return lines[y][(x - 1 + time).mod(lines[y].length - 2) + 1] != '<' &&
-            lines[y][(x - 1 - time).mod(lines[y].length - 2) + 1] != '>' &&
-            lines[(y - 1 + time).mod(lines.size - 2) + 1][x] != '^' &&
-            lines[(y - 1 - time).mod(lines.size - 2) + 1][x] != 'v'
-    }
 
     private fun search(start: IntPair, end: IntPair, startTime: Int = 0): Int {
         val (endX, endY) = end
