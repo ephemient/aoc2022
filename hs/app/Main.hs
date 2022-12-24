@@ -25,6 +25,7 @@ import Day20 (day20a, day20b)
 import Day21 (day21a, day21b)
 import Day22 (day22a, day22b)
 import Day23 (day23a, day23b)
+import Day24 (day24a, day24b)
 
 import Control.Monad ((<=<), ap, when)
 import Data.Function (on)
@@ -77,3 +78,4 @@ main = do
     run 21 (either (fail . errorBundlePretty) print) [day21a, day21b]
     run 22 print [day22a, day22b]
     run 23 print [day23a, day23b]
+    run 24 (maybe (fail "(⊥)") print) [day24a, day24b]
