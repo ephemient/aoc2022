@@ -14,11 +14,8 @@ class Day25(private val lines: List<String>) {
             }
         }
         while (n != 0L) {
-            n = n.floorDiv(5) + when (val d = n.mod(5)) {
-                3 -> 1.also { append('=') }
-                4 -> 1.also { append('-') }
-                else -> 0.also { append(d.digitToChar()) }
-            }
+            append("012=-"[n.mod(5)])
+            n = (n + 2).floorDiv(5)
         }
         reverse()
     }

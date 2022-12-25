@@ -14,7 +14,7 @@ day25 = T.reverse . T.unfoldr g . sum . map (T.foldl' f 0) . T.lines where
     f k '-' = 5 * k - 1
     f k c = 5 * k + digitToInt c
     g 0 = Nothing
-    g n = Just $ case n `divMod` 5 of
-        (q, 3) -> ('=', q + 1)
-        (q, 4) -> ('-', q + 1)
-        (q, r) -> (intToDigit r, q)
+    g n = let (q, r) = (n + 2) `divMod` 5 in Just (intToSnafuDigit $ r - 2, q)
+    intToSnafuDigit (-2) = '='
+    intToSnafuDigit (-1) = '-'
+    intToSnafuDigit d = intToDigit d
