@@ -56,6 +56,7 @@ day21 = "aoc2022.day21:parts"
 day22 = "aoc2022.day22:parts"
 day23 = "aoc2022.day23:parts"
 day24 = "aoc2022.day24:parts"
+day25 = "aoc2022.day25:parts"
 
 [tool.black]
 target_version = ["py311"]
