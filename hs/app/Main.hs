@@ -26,6 +26,7 @@ import Day21 (day21a, day21b)
 import Day22 (day22a, day22b)
 import Day23 (day23a, day23b)
 import Day24 (day24a, day24b)
+import Day25 (day25)
 
 import Control.Monad ((<=<), ap, when)
 import Data.Function (on)
@@ -79,3 +80,4 @@ main = do
     run 22 print [day22a, day22b]
     run 23 print [day23a, day23b]
     run 24 (maybe (fail "(⊥)") print) [day24a, day24b]
+    run 25 TIO.putStrLn [day25]
