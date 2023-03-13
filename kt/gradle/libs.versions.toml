@@ -2,7 +2,7 @@
 dependency-updates = "0.44.0"
 detekt = "1.22.0"
 graal-sdk = "22.3.0"
-junit-jupiter = "5.9.1"
+junit-jupiter = "5.9.2"
 kotlin = "1.7.21"
 kotlinpoet = "1.12.0"
 kotlinx-benchmark = "0.4.6"
