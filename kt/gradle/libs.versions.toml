@@ -1,5 +1,5 @@
 [versions]
-dependency-updates = "0.44.0"
+dependency-updates = "0.46.0"
 detekt = "1.22.0"
 graal-sdk = "22.3.0"
 junit-jupiter = "5.9.1"
